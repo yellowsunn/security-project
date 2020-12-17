@@ -2,9 +2,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import HomeView from '@/view/HomeView';
 import Login from '@/components/Login';
-import axios from 'axios';
 import UserView from '@/view/UserView';
 import ManagerView from '@/view/ManagerView';
+import { loginCheck, onlyLoginCheck, logout } from '@/router/common/loginCheck';
 
 Vue.use(VueRouter);
 
@@ -13,35 +13,26 @@ export const router = new VueRouter({
   routes: [
     {
       path: '/',
-      component: HomeView
+      component: HomeView,
+      beforeEnter: onlyLoginCheck
     },
     {
       path: '/login',
       component: Login
     },
     {
+      path: '/logout',
+      beforeEnter: logout
+    },
+    {
       path: '/user',
       component: UserView,
-      beforeEnter: async (to, from, next) => {
-        try {
-          await axios.get('http://localhost:8080/api', { withCredentials: true });
-          next();
-        } catch (error) {
-          next("/login");
-        }
-      }
+      beforeEnter: loginCheck
     },
     {
       path: '/manager',
       component: ManagerView,
-      beforeEnter: async (to, from, next) => {
-        try {
-          await axios.get('http://localhost:8080/api', { withCredentials: true });
-          next();
-        } catch (error) {
-          next("/login");
-        }
-      }
+      beforeEnter: loginCheck
     }
   ]
 });

@@ -8,6 +8,10 @@
         <div class="info">
           <b-input class="input_box" v-model="account.username" placeholder="user name" :required="true"></b-input>
           <b-input class="input_box" v-model="account.password" type="password" placeholder="password" :required="true"></b-input>
+          <div class="check_box">
+            <input type="checkbox" id="checkbox" v-model="rememberMe">
+            <label for="checkbox">로그인 상태 유지</label>
+          </div>
         </div>
         <div class="submit">
           <b-button class="btn btn-lg btn-block submit_btn" type="submit" variant="success">Log in</b-button>
@@ -29,32 +33,32 @@ export default {
         password: '',
       },
       error: {
-        message: '',
-        status: 200,
+        message: ''
       },
+      rememberMe: false,
     };
   },
   methods: {
     async onSubmit(event) {
       event.preventDefault();
-
       try {
-        const response = await axios.post('http://localhost:8080/api/login', this.account, { withCredentials: true });
-        this.error.status = response.status;
+        await axios.post(`http://localhost:8080/api/login?rememberMe=${this.rememberMe}`, this.account, { withCredentials: true });
         await this.$router.push('/');
       } catch (error) {
-        this.error.status = error.response.status;
         this.error.message = error.response.data;
+        this.account.username = '';
+        this.account.password = '';
       }
-
-      this.account.username = '';
-      this.account.password = '';
     },
   },
 };
 </script>
 
 <style scoped>
+label {
+  margin: 0;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
 section {
   width: 100vw;
@@ -111,6 +115,20 @@ section .login_container .form .info .input_box {
   font-size: 1em;
 }
 
+section .login_container .form .info .check_box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25em;
+  font-size: 0.8em;
+  color: #4e555b;
+  text-align: center;
+}
+
+section .login_container .form .info .check_box #checkbox {
+  zoom: 1.5;
+  margin-right: 0.5em;
+}
+
 section .login_container .form .submit {
   flex: 1 1 40%;
 }
@@ -131,11 +149,17 @@ section .login_container .form .submit .error_log {
   section {
     font-size: 1rem;
   }
+  section .login_container .form .info .check_box #checkbox {
+    zoom: 1.2;
+  }
 }
 
 @media screen and (max-width: 30em) {
   section {
     font-size: 0.8rem;
+  }
+  section .login_container .form .info .check_box #checkbox {
+    zoom: 0.96;
   }
 }
 </style>

@@ -16,6 +16,7 @@ export default {
   --primary-color-dark: #bec5b7;
   --primary-color-light: #ffffff;
   --header-color: #282c35;
+  --button-color: #1a72e6;
 }
 
 * {

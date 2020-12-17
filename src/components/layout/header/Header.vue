@@ -4,7 +4,7 @@
       <div class="toggleBtn">
         <a href="#" v-on:click="toggleBtnClick"><i class="fas fa-bars" v-bind:class="{ 'visible' : isVisible }"></i></a>
       </div>
-      <div class="logo" v-on:click="$router.push('/')">
+      <div class="logo">
         <div class="image">
           <img src="@/assets/springsecurity.png">
         </div>
@@ -17,10 +17,7 @@
       <li class="item"><a href="/manager">MANAGER</a></li>
       <li class="item"><a href="#">ADMIN</a></li>
     </ul>
-    <UserInfo></UserInfo>
-    <div class="user_info">
-      <a href="/login" class="login">로그인</a>
-    </div>
+    <UserInfo class="user_info"></UserInfo>
   </header>
 </template>
 
@@ -134,17 +131,6 @@ header .user_info {
   align-items: center;
 }
 
-header .user_info .login {
-  background-color: #1a72e6;
-  color: white;
-  padding: 0.563em 0.938em;
-  border-radius: 4px;
-}
-
-header .user_info .login:hover {
-  background-color: #4383ee;
-}
-
 @media screen and (max-width: 768px) {
   header {
     flex-direction: column;
@@ -179,10 +165,6 @@ header .user_info .login:hover {
   header .user_info {
     position: absolute;
     right: 14px;
-  }
-
-  header .user_info .login {
-    font-size: 0.9rem;
   }
 
   /*클릭 이벤트*/
