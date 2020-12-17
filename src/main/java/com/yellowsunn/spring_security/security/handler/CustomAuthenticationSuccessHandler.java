@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AsyncAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -19,7 +19,6 @@ public class AsyncAuthenticationSuccessHandler implements AuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        objectMapper.writeValue(response.getWriter(), "Success");
+        objectMapper.writeValue(response.getWriter(), "Authentication succeeded");
     }
 }

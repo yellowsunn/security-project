@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AsyncLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class CustomLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AsyncLoginProcessingFilter() {
+    public CustomLoginProcessingFilter() {
         super(new AntPathRequestMatcher("/api/login"));
     }
 

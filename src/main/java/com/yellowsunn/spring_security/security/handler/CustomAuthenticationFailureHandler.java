@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AsyncAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -24,9 +24,9 @@ public class AsyncAuthenticationFailureHandler implements AuthenticationFailureH
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         if (exception instanceof UsernameNotFoundException) {
-            errMsg = "Can't find username";
+            errMsg = "Invalid username";
         } else if (exception instanceof BadCredentialsException) {
-            errMsg = "Invalid password";
+            errMsg = "The password is not correct";
         }
         objectMapper.writeValue(response.getWriter(), errMsg);
     }
