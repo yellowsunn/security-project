@@ -11,39 +11,64 @@
         <span class="title">Security</span>
       </div>
     </div>
-    <ul class="menu" v-bind:class="{ 'visible' : isVisible }">
+
+    <VueSlideToggle v-if="isVisible" :open="toggle" :duration="500">
+      <ul class="menu" v-bind:class="{ 'visible' : isVisible }">
+        <li class="item"><a href="/">HOME</a></li>
+        <li class="item"><a href="/user">USER</a></li>
+        <li class="item"><a href="/manager">MANAGER</a></li>
+        <li class="item"><a href="#">ADMIN</a></li>
+      </ul>
+    </VueSlideToggle>
+    <ul v-else class="menu">
       <li class="item"><a href="/">HOME</a></li>
       <li class="item"><a href="/user">USER</a></li>
       <li class="item"><a href="/manager">MANAGER</a></li>
       <li class="item"><a href="#">ADMIN</a></li>
     </ul>
+
     <UserInfo class="user_info"></UserInfo>
   </header>
 </template>
 
 <script>
 import UserInfo from '@/components/layout/header/UserInfo';
+import {VueSlideToggle} from "vue-slide-toggle"
+
 
 export default {
   components: {
-    UserInfo
+    UserInfo,
+    VueSlideToggle
   },
   mounted() {
     window.addEventListener('resize', this.handleResize);
+    if (innerWidth > 768 && this.isVisible === true) {
+      console.log("호출");
+      this.isVisible = false;
+    } else if (innerWidth <= 768 && this.isVisible === false) {
+      console.log("호출2");
+      this.isVisible = true;
+    }
   },
   data() {
     return {
+      toggle: false,
       isVisible: false,
     };
   },
   methods: {
     toggleBtnClick() {
-      this.isVisible = !this.isVisible;
+      this.toggle = !this.toggle;
     },
     handleResize() {
       if (innerWidth > 768 && this.isVisible === true) {
         console.log("호출");
         this.isVisible = false;
+        this.toggle = false;
+      } else if (innerWidth <= 768 && this.isVisible === false) {
+        console.log("호출2");
+        this.isVisible = true;
       }
     }
   },
@@ -149,7 +174,6 @@ header .user_info {
     flex-direction: column;
     align-items: center;
     width: 100vw;
-    display: none;
   }
 
   header .menu .item {
@@ -165,11 +189,6 @@ header .user_info {
   header .user_info {
     position: absolute;
     right: 14px;
-  }
-
-  /*클릭 이벤트*/
-  header > .visible {
-    display: flex;
   }
 }
 </style>

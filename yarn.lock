@@ -8159,6 +8159,11 @@ vue-router@^3.4.9:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.4.9.tgz#c016f42030ae2932f14e4748b39a1d9a0e250e66"
   integrity sha512-CGAKWN44RqXW06oC+u4mPgHLQQi2t6vLD/JbGRDAXm0YpMv0bgpKuU5bBd7AvMgfTz9kXVRIWKHqRwGEb8xFkA==
 
+vue-slide-toggle@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vue-slide-toggle/-/vue-slide-toggle-1.1.1.tgz#a7949aeb3faa470ccf427bfa4920e45daf138953"
+  integrity sha512-RFDnoE23nV0uutLPtYcNqQMNjR01a97uy31WuLDyu4KX5z2NYAYgxe3S0G+ATtctFt5ce5U2A+/GE6BBwEvgfA==
+
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-4.1.2.tgz#dedf349806f25ceb4e64f3ad7c0a44fba735fcf8"
