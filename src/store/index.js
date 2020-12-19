@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     isLogin: false,
+    toggleMenu: false
   },
   actions: {
     async FETCH_LOGIN_STATUS(context) {
@@ -25,11 +26,23 @@ export const store = new Vuex.Store({
         console.log("store/index.js", error);
         throw Error("logout error");
       }
+    },
+    FETCH_TOGGLE_CHANGE({ commit }) {
+      commit('SET_TOGGLE_CHANGE');
+    },
+    FETCH_TOGGLE_OFF({ commit }) {
+      commit('SET_TOGGLE_OFF');
     }
   },
   mutations: {
     SET_LOGIN_STATUS(state) {
       state.isLogin = true;
+    },
+    SET_TOGGLE_CHANGE(state) {
+      state.toggleMenu = !state.toggleMenu;
+    },
+    SET_TOGGLE_OFF(state) {
+      state.toggleMenu = false;
     }
   }
 });

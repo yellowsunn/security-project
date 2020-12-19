@@ -1,83 +1,27 @@
 <template>
   <header>
-    <div class="logoAndToggleBtn">
-      <div class="toggleBtn">
-        <a href="#" v-on:click="toggleBtnClick"><i class="fas fa-bars" v-bind:class="{ 'visible' : isVisible }"></i></a>
-      </div>
-      <div class="logo">
-        <div class="image">
-          <img src="@/assets/springsecurity.png">
-        </div>
-        <span class="title">Security</span>
-      </div>
-    </div>
-
-    <VueSlideToggle v-if="isVisible" :open="toggle" :duration="500">
-      <ul class="menu" v-bind:class="{ 'visible' : isVisible }">
-        <li class="item"><a href="/">HOME</a></li>
-        <li class="item"><a href="/user">USER</a></li>
-        <li class="item"><a href="/manager">MANAGER</a></li>
-        <li class="item"><a href="#">ADMIN</a></li>
-      </ul>
-    </VueSlideToggle>
-    <ul v-else class="menu">
-      <li class="item"><a href="/">HOME</a></li>
-      <li class="item"><a href="/user">USER</a></li>
-      <li class="item"><a href="/manager">MANAGER</a></li>
-      <li class="item"><a href="#">ADMIN</a></li>
-    </ul>
-
+    <LogoAndToggleBtn class="logoAndToggleBtn"></LogoAndToggleBtn>
+    <Menu></Menu>
     <UserInfo class="user_info"></UserInfo>
   </header>
 </template>
 
 <script>
+import Menu from '@/components/layout/header/Menu';
 import UserInfo from '@/components/layout/header/UserInfo';
-import {VueSlideToggle} from "vue-slide-toggle"
-
+import LogoAndToggleBtn from '@/components/layout/header/LogoAndToggleBtn';
 
 export default {
   components: {
+    LogoAndToggleBtn,
+    Menu,
     UserInfo,
-    VueSlideToggle
-  },
-  mounted() {
-    window.addEventListener('resize', this.handleResize);
-    if (innerWidth > 768 && this.isVisible === true) {
-      console.log("호출");
-      this.isVisible = false;
-    } else if (innerWidth <= 768 && this.isVisible === false) {
-      console.log("호출2");
-      this.isVisible = true;
-    }
-  },
-  data() {
-    return {
-      toggle: false,
-      isVisible: false,
-    };
-  },
-  methods: {
-    toggleBtnClick() {
-      this.toggle = !this.toggle;
-    },
-    handleResize() {
-      if (innerWidth > 768 && this.isVisible === true) {
-        console.log("호출");
-        this.isVisible = false;
-        this.toggle = false;
-      } else if (innerWidth <= 768 && this.isVisible === false) {
-        console.log("호출2");
-        this.isVisible = true;
-      }
-    }
   },
 };
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
-
 header {
   font-family: 'Noto Sans KR', sans-serif;
   display: flex;
@@ -100,52 +44,12 @@ header .logoAndToggleBtn {
   display: flex;
 }
 
-  /* toggle button */
-header .logoAndToggleBtn .toggleBtn {
-  display: none;
-  margin-right: 16px;
-}
-
-header .logoAndToggleBtn .toggleBtn .fa-bars:hover {
-  color: #bcbcbc;
-}
-
-  /* logo */
-header .logoAndToggleBtn .logo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  cursor: pointer;
-}
-
-header .logoAndToggleBtn .logo img {
-  width: 1.5em;
-}
-
-header .logoAndToggleBtn .logo .title {
-  color: #65ba40;
-}
-
 /* menu */
 header .menu {
   flex: 1 1 60%;
   display: flex;
   justify-content: space-around;
   margin-bottom: 0;
-}
-
-header .menu .item > a {
-  font-size: 14px;
-  padding: 9px 15px;
-  border-radius: 4px;
-}
-
-header .menu .item a:hover {
-  background: #50555f;
-}
-
-header .menu .item a {
-  display: block;
 }
 
 /* user_info */
@@ -156,7 +60,7 @@ header .user_info {
   align-items: center;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
   header {
     flex-direction: column;
   }
@@ -166,29 +70,21 @@ header .user_info {
     align-self: flex-start;
   }
 
-  header .logoAndToggleBtn .toggleBtn {
-    display: block;
-  }
-
   header .menu {
     flex-direction: column;
     align-items: center;
     width: 100vw;
   }
 
-  header .menu .item {
-    text-align: center;
-    letter-spacing: 3px;
-    width: 96vw;
-  }
-
-  header .menu .item:first-child {
-    margin-top: 0.6rem;
-  }
-
   header .user_info {
     position: absolute;
-    right: 14px;
+    right: 0.875rem;
+  }
+}
+
+@media screen and (max-width: 30rem){
+  header .user_info {
+    top: 0.688em;
   }
 }
 </style>

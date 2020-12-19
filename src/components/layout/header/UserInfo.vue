@@ -25,23 +25,23 @@ a {
   background-color: #1a72e6;
   color: white;
   padding: 0.563em 1.5em;
-  border-radius: 4px;
-  margin-right: 16px;
+  border-radius: .25em;
+  margin-right: 1em;
 }
 
 .register {
   background-color: white;
   padding: 0.542em 0.938em;
   color: var(--button-color);
-  border: 1px solid var(--button-color);
-  border-radius: 4px;
+  border: .0625em solid var(--button-color);
+  border-radius: .25em;
 }
 
 .logout {
   background-color: var(--button-color);
   color: white;
   padding: 0.563em 0.938em;
-  border-radius: 4px;
+  border-radius: .25em;
 }
 
 .login:hover, .logout:hover {
@@ -52,9 +52,16 @@ a {
   background-color: #e3ebff;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
   .login, .register, .logout {
     font-size: 0.9rem;
   }
+}
+
+@media screen and (max-width: 30rem) {
+  .login, .register, .logout {
+    font-size: 0.75em;
+  }
+
 }
 </style>
