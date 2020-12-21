@@ -23,8 +23,8 @@ export default {
         this.message = response.data;
         console.log(response);
       } catch (error) {
-        console.log(error.response);
-        this.message = error.response.data;
+        console.log(error);
+        this.message = error.data;
       }
     }
   }

@@ -3,8 +3,9 @@ import { store } from '@/store';
 const onlyLoginCheck = async (to, from, next) => {
   try {
     await store.dispatch('FETCH_LOGIN_STATUS');
+    store.commit('SET_LOGIN_STATUS');
   } catch (error) {
-    console.log("router/index.js", error);
+    console.log(error.data);
   }
   next();
 }
@@ -13,9 +14,10 @@ const onlyLoginCheck = async (to, from, next) => {
 const loginCheck = async (to, from, next) => {
   try {
     await store.dispatch('FETCH_LOGIN_STATUS');
+    store.commit('SET_LOGIN_STATUS');
     next();
   } catch (error) {
-    console.log("router/index.js", error);
+    console.log(error.data);
     next("/login");
   }
 }
@@ -24,7 +26,7 @@ const logout = async (to, from, next) => {
   try {
     await store.dispatch('FETCH_LOGOUT');
   } catch (error) {
-    console.log(error);
+    console.log(error.data);
   }
   next("/");
 }

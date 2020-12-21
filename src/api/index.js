@@ -1,25 +1,28 @@
 import axios from 'axios';
 
+axios.interceptors.response.use(
+  response => {
+    return response;
+  }, error => {
+    return Promise.reject(error.response);
+  }
+);
+
 const config = {
-  baseUrl: 'http://localhost:8080/api',
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true
 };
 
 const fetchLoginStatus = async () => {
-  try {
-    return await axios.get(config.baseUrl, { withCredentials: true });
-  } catch (error) {
-    console.log("api/index.js", error.response);
-    throw Error("You are not logged in");
-  }
+  return await axios.get('', config);
 };
 
 const fetchLogout = async () => {
-  try {
-    return await axios.get(`${config.baseUrl}/logout`, { withCredentials: true });
-  } catch (error) {
-    console.log("api/index.js", error.response);
-    throw Error("logout error");
-  }
+  return await axios.post('/logout', null, config);
 }
 
-export { fetchLoginStatus, fetchLogout };
+const fetchLogin = async (account, rememberMe) => {
+   return await axios.post(`/login?rememberMe=${rememberMe}`, account, config);
+}
+
+export { fetchLoginStatus, fetchLogout, fetchLogin };

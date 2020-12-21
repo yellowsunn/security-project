@@ -7,7 +7,8 @@
         </div>
         <div class="info">
           <b-input class="input_box" v-model="account.username" placeholder="user name" :required="true"></b-input>
-          <b-input class="input_box" v-model="account.password" type="password" placeholder="password" :required="true"></b-input>
+          <b-input class="input_box" v-model="account.password" type="password" placeholder="password"
+                   :required="true"></b-input>
           <div class="check_box">
             <input type="checkbox" id="checkbox" v-model="rememberMe">
             <label for="checkbox">로그인 상태 유지</label>
@@ -17,15 +18,13 @@
       </b-form>
       <div class="etc">
         <div class="register">Don't have an account? <a href="/register">Register now</a></div>
-        <div class="error_log">{{error.message}}</div>
+        <div class="error_log">{{ error.message }}</div>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -34,7 +33,7 @@ export default {
         password: '',
       },
       error: {
-        message: ''
+        message: '',
       },
       rememberMe: false,
     };
@@ -43,14 +42,18 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       try {
-        await axios.post(`http://localhost:8080/api/login?rememberMe=${this.rememberMe}`, this.account, { withCredentials: true });
+        await this.$store.dispatch(
+            'FETCH_LOGIN',
+            { account: this.account, rememberMe: this.rememberMe },
+        );
         await this.$router.push('/');
       } catch (error) {
-        this.error.message = error.response.data;
+        this.error.message = error.data;
         this.account.username = '';
         this.account.password = '';
+        console.log(error.data);
       }
-    },
+    }
   },
 };
 </script>
@@ -150,6 +153,7 @@ section .login_container .etc .error_log {
   section {
     font-size: 1rem;
   }
+
   section .login_container .form .info .check_box #checkbox {
     zoom: 1.2;
   }
@@ -159,6 +163,7 @@ section .login_container .etc .error_log {
   section {
     font-size: 0.8rem;
   }
+
   section .login_container .form .info .check_box #checkbox {
     zoom: 0.96;
   }
