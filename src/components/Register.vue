@@ -1,22 +1,24 @@
 <template>
   <section>
-    <div class="login_container">
-      <b-form class="form" @submit="onSubmit">
+    <div class="register_container">
+      <b-form class="form" @submit="onSubmit" :validated="false">
         <div class="title">
-          <span>Log in</span>
+          <span>Register</span>
         </div>
         <div class="info">
           <b-input class="input_box" v-model="account.username" placeholder="user name" :required="true"></b-input>
           <b-input class="input_box" v-model="account.password" type="password" placeholder="password" :required="true"></b-input>
-          <div class="check_box">
-            <input type="checkbox" id="checkbox" v-model="rememberMe">
-            <label for="checkbox">로그인 상태 유지</label>
+          <div class="confirm_input_box">
+            <b-input class="input_box" v-model="confirmPassword" type="password" placeholder="confirm password" :state="checkSamePassword" aria-describedby="input-live-feedback" :required="true"></b-input>
+            <b-form-invalid-feedback id="input-live-feedback">
+              Password mismatch
+            </b-form-invalid-feedback>
           </div>
         </div>
-        <b-button class="btn btn-lg btn-block submit_btn" type="submit" variant="success">Log in</b-button>
+        <b-button class="btn btn-lg btn-block submit_btn" type="submit" variant="success">Create Account</b-button>
       </b-form>
       <div class="etc">
-        <div class="register">Don't have an account? <a href="/register">Register now</a></div>
+        <div class="login">Already have an account? <a href="/login">Login here</a></div>
         <div class="error_log">{{error.message}}</div>
       </div>
     </div>
@@ -30,25 +32,33 @@ export default {
   data() {
     return {
       account: {
-        username: '',
-        password: '',
+        username: "",
+        password: ""
       },
+      confirmPassword: "",
       error: {
-        message: ''
-      },
-      rememberMe: false,
-    };
+        message: ""
+      }
+    }
+  },
+  computed: {
+    checkSamePassword() {
+      return this.account.password === this.confirmPassword;
+    }
   },
   methods: {
     async onSubmit(event) {
       event.preventDefault();
+      if (!this.checkSamePassword) return;
+
       try {
-        await axios.post(`http://localhost:8080/api/login?rememberMe=${this.rememberMe}`, this.account, { withCredentials: true });
+        await axios.post('http://localhost:8080/api/register', this.account, { withCredentials: true });
         await this.$router.push('/');
       } catch (error) {
         this.error.message = error.response.data;
         this.account.username = '';
         this.account.password = '';
+        this.confirmPassword = '';
       }
     },
   },
@@ -57,10 +67,6 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
-
-label {
-  margin: 0;
-}
 
 section {
   width: 100vw;
@@ -73,7 +79,7 @@ section {
   font-size: 1.25rem;
 }
 
-section .login_container {
+section .register_container {
   display: flex;
   flex-direction: column;
   background: #fdfdfd;
@@ -84,14 +90,14 @@ section .login_container {
   box-shadow: 0.0625em 0.0625em 0.625em 0.0625em #e2e2e2;
 }
 
-section .login_container .form {
+section .register_container .form {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-section .login_container .form .title {
+section .register_container .form .title {
   font-size: 2.25em;
   text-align: center;
   color: #373c3f;
@@ -101,48 +107,43 @@ section .login_container .form .title {
   align-items: center;
 }
 
-section .login_container .form .info {
+section .register_container .form .info {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-section .login_container .form .info .input_box {
+section .register_container .form .info .input_box {
   background: #e3e9e9;
-  height: 3em;
+  height: 2.6em;
   margin-bottom: 1.25em;
   font-size: 1em;
 }
 
-section .login_container .form .info .check_box {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.25em;
-  font-size: 0.8em;
-  color: #4e555b;
-  text-align: center;
+section .register_container .form .info .confirm_input_box {
+  height: 3.85em;
+  margin-bottom: .45em;
 }
 
-section .login_container .form .info .check_box #checkbox {
-  zoom: 1.5;
-  margin-right: 0.5em;
+section .register_container .form .info .confirm_input_box .input_box {
+  margin-bottom: 0;
 }
 
-section .login_container .form .submit_btn {
+section .register_container .form .submit_btn {
   margin-bottom: 1.25em;
   font-size: 1.125em;
   height: 3em;
 }
 
-section .login_container .etc .register {
+section .register_container .etc .login {
   color: #8e8e8e;
   font-size: 0.8em;
   margin-bottom: 0.6em;
 }
 
-section .login_container .etc .error_log {
+section .register_container .etc .error_log {
   color: #b71c1c;
-  margin-left: 0.25em;
+  font-size: 0.9em;
   font-style: italic;
 }
 
@@ -150,17 +151,11 @@ section .login_container .etc .error_log {
   section {
     font-size: 1rem;
   }
-  section .login_container .form .info .check_box #checkbox {
-    zoom: 1.2;
-  }
 }
 
 @media screen and (max-width: 30em) {
   section {
     font-size: 0.8rem;
-  }
-  section .login_container .form .info .check_box #checkbox {
-    zoom: 0.96;
   }
 }
 </style>
