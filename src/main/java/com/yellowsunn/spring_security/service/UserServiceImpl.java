@@ -6,7 +6,6 @@ import com.yellowsunn.spring_security.domain.entity.AccountRole;
 import com.yellowsunn.spring_security.domain.entity.Role;
 import com.yellowsunn.spring_security.repository.AccountRepository;
 import com.yellowsunn.spring_security.repository.AccountRoleRepository;
-import com.yellowsunn.spring_security.repository.RoleHierarchyRepository;
 import com.yellowsunn.spring_security.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
     private void checkUsername(String username) {
         Optional<Account> accountOptional = accountRepository.findByUsername(username);
         if (accountOptional.isPresent()) {
-            throw new IllegalArgumentException("The name already exists.");
+            throw new IllegalArgumentException("Account already exists");
         }
     }
 }

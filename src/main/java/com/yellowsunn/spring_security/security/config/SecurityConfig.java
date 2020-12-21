@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -57,10 +58,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and().rememberMe()
                 .key(REMEMBER_ME_KEY)
-                .rememberMeServices(customRememberMeServices());
+                .rememberMeServices(customRememberMeServices())
 
-        http.addFilterBefore(customLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
+                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+
+        http.addFilterBefore(customLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.cors();
     }
@@ -69,7 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:8081");
+        configuration.addAllowedOriginPattern("*");
+//        configuration.addAllowedOrigin("http://localhost:8081");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
