@@ -10,7 +10,7 @@ axios.interceptors.response.use(
 
 const config = {
   baseURL: 'http://localhost:8080/api',
-  withCredentials: true
+  withCredentials: true,
 };
 
 const fetchLoginStatus = async () => {
@@ -19,10 +19,24 @@ const fetchLoginStatus = async () => {
 
 const fetchLogout = async () => {
   return await axios.post('/logout', null, config);
-}
+};
 
 const fetchLogin = async (account, rememberMe) => {
-   return await axios.post(`/login?rememberMe=${rememberMe}`, account, config);
-}
+  return await axios.post('/login', account, {
+    ...config,
+    params: {
+      rememberMe,
+    },
+  });
+};
 
-export { fetchLoginStatus, fetchLogout, fetchLogin };
+const fetchRegister = async (account) => {
+  return await axios.post('/register', account, config);
+};
+
+export {
+  fetchLoginStatus,
+  fetchLogout,
+  fetchLogin,
+  fetchRegister,
+};

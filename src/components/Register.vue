@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -52,10 +50,10 @@ export default {
       if (!this.checkSamePassword) return;
 
       try {
-        await axios.post('http://localhost:8080/api/register', this.account, { withCredentials: true });
+        await this.$store.dispatch('FETCH_REGISTER', this.account);
         await this.$router.push('/');
       } catch (error) {
-        this.error.message = error.response.data;
+        this.error.message = error.data;
         this.account.username = '';
         this.account.password = '';
         this.confirmPassword = '';

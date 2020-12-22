@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a v-show="!loginStatus" href="/login" class="login">Login</a>
-    <a v-show="!loginStatus" href="/register" class="register">Register</a>
+    <router-link v-show="!loginStatus" to="/login" class="login">Login</router-link>
+    <router-link v-show="!loginStatus" to="/register" class="register">Register</router-link>
     <a v-show="loginStatus" href="/logout" class="logout">Sign out</a>
   </div>
 </template>
@@ -10,7 +10,7 @@
 export default {
   computed: {
     loginStatus() {
-      return this.$store.state.isLogin;
+      return this.$store.state.user.isLogin;
     }
   },
 };

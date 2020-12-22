@@ -1,25 +1,22 @@
 <template>
-  <div class="home">
+  <div>
     <Header></Header>
-    <HomeContent></HomeContent>
+    <AdminContent></AdminContent>
   </div>
 </template>
 
 <script>
 import Header from '@/components/layout/header/Header';
-import HomeContent from '@/components/layout/content/HomeContent';
+import AdminContent from '@/components/layout/content/AdminContent';
 
 export default {
   components: {
     Header,
-    HomeContent
+    AdminContent,
   }
 };
 </script>
 
 <style scoped>
-.home {
-  width: 100vw;
-  height: 100vh;
-}
+
 </style>

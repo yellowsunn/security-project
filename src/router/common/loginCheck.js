@@ -2,8 +2,8 @@ import { store } from '@/store';
 
 const onlyLoginCheck = async (to, from, next) => {
   try {
-    await store.dispatch('FETCH_LOGIN_STATUS');
-    store.commit('SET_LOGIN_STATUS');
+    const response = await store.dispatch('FETCH_LOGIN_STATUS');
+    store.commit('SET_LOGIN_STATUS', response.data);
   } catch (error) {
     console.log(error.data);
   }
@@ -13,8 +13,8 @@ const onlyLoginCheck = async (to, from, next) => {
 // 로그인을 안한 경우 로그인화면으로 보냄
 const loginCheck = async (to, from, next) => {
   try {
-    await store.dispatch('FETCH_LOGIN_STATUS');
-    store.commit('SET_LOGIN_STATUS');
+    const response = await store.dispatch('FETCH_LOGIN_STATUS');
+    store.commit('SET_LOGIN_STATUS', response.data);
     next();
   } catch (error) {
     console.log(error.data);

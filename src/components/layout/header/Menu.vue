@@ -1,17 +1,17 @@
 <template>
   <VueSlideToggle v-if="isVisible" :open="toggle" :duration="500">
-    <ul class="menu">
-      <li class="item"><a href="/">HOME</a></li>
-      <li class="item"><a href="/user">USER</a></li>
-      <li class="item"><a href="/manager">MANAGER</a></li>
-      <li class="item"><a href="#">ADMIN</a></li>
+    <ul class="menu" @click="toggleOff">
+      <li class="item"><router-link to="/">HOME</router-link></li>
+      <li class="item"><router-link to="/user">USER</router-link></li>
+      <li class="item"><router-link to="/manager">MANAGER</router-link></li>
+      <li class="item"><router-link to="/admin">ADMIN</router-link></li>
     </ul>
   </VueSlideToggle>
   <ul v-else class="menu">
-    <li class="item"><a href="/">HOME</a></li>
-    <li class="item"><a href="/user">USER</a></li>
-    <li class="item"><a href="/manager">MANAGER</a></li>
-    <li class="item"><a href="#">ADMIN</a></li>
+    <li class="item"><router-link to="/">HOME</router-link></li>
+    <li class="item"><router-link to="/user">USER</router-link></li>
+    <li class="item"><router-link to="/manager">MANAGER</router-link></li>
+    <li class="item"><router-link to="/admin">ADMIN</router-link></li>
   </ul>
 </template>
 
@@ -48,6 +48,9 @@ export default {
       } else if (innerWidth <= 768 && this.isVisible === false) {
         this.isVisible = true;
       }
+    },
+    toggleOff() {
+      this.$store.dispatch('FETCH_TOGGLE_OFF');
     }
   }
 };

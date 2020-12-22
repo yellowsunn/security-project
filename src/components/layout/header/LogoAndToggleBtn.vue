@@ -3,7 +3,7 @@
     <div class="toggleBtn">
       <a href="#" v-on:click="toggleBtnClick"><i class="fas fa-bars"></i></a>
     </div>
-    <div class="logo">
+    <div class="logo" @click="goToHome">
       <div class="image">
         <img src="@/assets/springsecurity.png">
       </div>
@@ -18,6 +18,11 @@ export default {
     toggleBtnClick() {
       this.$store.dispatch('FETCH_TOGGLE_CHANGE');
     },
+    goToHome() {
+      if (window.location.pathname !== '/') {
+        this.$router.push("/");
+      }
+    }
   },
 };
 </script>

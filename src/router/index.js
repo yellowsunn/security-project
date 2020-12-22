@@ -6,6 +6,7 @@ import Register from '@/components/Register';
 import UserView from '@/view/UserView';
 import ManagerView from '@/view/ManagerView';
 import { loginCheck, onlyLoginCheck, logout } from '@/router/common/loginCheck';
+import AdminView from '@/view/AdminView';
 
 Vue.use(VueRouter);
 
@@ -37,6 +38,11 @@ export const router = new VueRouter({
     {
       path: '/manager',
       component: ManagerView,
+      beforeEnter: loginCheck
+    },
+    {
+      path: '/admin',
+      component: AdminView,
       beforeEnter: loginCheck
     }
   ]
