@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import Menu from '@/components/layout/header/Menu';
-import UserInfo from '@/components/layout/header/UserInfo';
-import LogoAndToggleBtn from '@/components/layout/header/LogoAndToggleBtn';
+import Menu from '@/components/layout/header/children/Menu';
+import UserInfo from '@/components/layout/header/children/UserInfo';
+import LogoAndToggleBtn from '@/components/layout/header/children/LogoAndToggleBtn';
 
 export default {
   components: {

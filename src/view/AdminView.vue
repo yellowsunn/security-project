@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin">
     <Header></Header>
     <AdminContent></AdminContent>
   </div>
@@ -18,5 +18,9 @@ export default {
 </script>
 
 <style scoped>
-
+.admin {
+  width: 100vw;
+  height: 100vh;
+  background-color: #eeeeee;
+}
 </style>

@@ -48,7 +48,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  cursor: default;
+  cursor: pointer;
 }
 
 .logo img {
