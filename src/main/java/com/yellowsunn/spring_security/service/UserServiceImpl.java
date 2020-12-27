@@ -1,6 +1,7 @@
 package com.yellowsunn.spring_security.service;
 
 import com.yellowsunn.spring_security.domain.dto.UserDto;
+import com.yellowsunn.spring_security.domain.dto.UsersDto;
 import com.yellowsunn.spring_security.domain.entity.Account;
 import com.yellowsunn.spring_security.domain.entity.AccountRole;
 import com.yellowsunn.spring_security.domain.entity.Role;
@@ -12,7 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,23 @@ public class UserServiceImpl implements UserService {
                 .account(account)
                 .role(roleUserOptional.get())
                 .build());
+    }
+
+    @Override
+    public UsersDto findAll() {
+        List<AccountRole> accountRoles = accountRoleRepository.findCustomAll();
+        List<UserDto> users = accountRoles.stream()
+                .map(accountRole -> UserDto.builder()
+                        .username(accountRole.getAccount().getUsername())
+                        .password(accountRole.getAccount().getPassword())
+                        .role(accountRole.getRole().getName())
+                        .build()
+                ).collect(Collectors.toList());
+
+        return UsersDto.builder()
+                .users(users)
+                .size(users.size())
+                .build();
     }
 
     private void encryptUser(UserDto userDto) {

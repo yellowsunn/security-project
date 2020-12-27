@@ -8,6 +8,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor @Builder
 @Getter
+@EqualsAndHashCode(of = "username")
 public class Account {
     @Id @GeneratedValue
     @Column(name = "account_id")

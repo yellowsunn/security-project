@@ -6,6 +6,7 @@ import com.yellowsunn.spring_security.repository.custom.AccountRoleRepositoryCus
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,5 +24,14 @@ public class AccountRoleRepositoryCustomImpl implements AccountRoleRepositoryCus
                 .getSingleResult();
 
         return Optional.ofNullable(accountRole);
+    }
+
+    @Override
+    public List<AccountRole> findCustomAll() {
+        return em.createQuery(
+                "select ar from AccountRole ar " +
+                        "join fetch ar.role " +
+                        "join fetch ar.account ", AccountRole.class)
+                .getResultList();
     }
 }

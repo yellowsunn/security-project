@@ -6,6 +6,7 @@ import com.yellowsunn.spring_security.security.handler.CustomAuthenticationSucce
 import com.yellowsunn.spring_security.security.provider.CustomAuthenticationProvider;
 import com.yellowsunn.spring_security.security.service.CustomRememberMeServices;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,6 +14,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,10 +25,17 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -60,7 +71,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .key(REMEMBER_ME_KEY)
                 .rememberMeServices(customRememberMeServices())
 
-                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+
+                .and().sessionManagement()
+                .maximumSessions(1)
+                .sessionRegistry(sessionRegistry());
 
         http.addFilterBefore(customLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -110,6 +125,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customLoginProcessingFilter.setAuthenticationManager(super.authenticationManagerBean());
         customLoginProcessingFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler());
         customLoginProcessingFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler());
+        customLoginProcessingFilter.setSessionAuthenticationStrategy(sessionStrategy());
         return customLoginProcessingFilter;
     }
 
@@ -119,5 +135,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         rememberMeServices.setAlwaysRemember(false);
         rememberMeServices.setParameter("rememberMe");
         return rememberMeServices;
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() { //(5)
+        return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
+    }
+
+    @Bean
+    public SessionAuthenticationStrategy sessionStrategy() {
+        return new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
     }
 }
