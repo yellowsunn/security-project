@@ -8,10 +8,9 @@
     }"></i>
     <span v-if="!userInfo.isLogin" class="title">로그인이 필요합니다</span>
     <div v-else class="title">
-      <div>어서오세요! <span class="name">'{{userInfo.name}}'</span>님</div>
-      <div class="role">(권한: {{userInfo.role}})</div>
+      <div>어서오세요! <span class="name">'{{ userInfo.name }}'</span>님</div>
+      <div class="role">(권한: {{ userInfo.role }})</div>
     </div>
-
   </section>
 </template>
 
@@ -25,7 +24,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
 
 section {
@@ -34,30 +33,26 @@ section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 66.97px);
   font-size: 2rem;
-}
-
-section .fas {
-  font-size: 5.333em;
-  margin-bottom: 0.125em;
-}
-
-section .title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-section .title .name {
-  font-weight: bold;
-}
-
-section .title .role {
-  margin-top: 0.375em;
-  font-size: 0.667em;
-  color: #4e555b;
+  .fas {
+    font-size: 5.333em;
+    margin-bottom: 0.125em;
+  }
+  .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .name {
+      font-weight: bold;
+    }
+    .role {
+      margin-top: 0.375em;
+      font-size: 0.667em;
+      color: #4e555b;
+    }
+  }
 }
 
 @media screen and (max-width: 48rem) {
@@ -72,6 +67,5 @@ section .title .role {
     font-size: 1.6rem;
     height: calc(100vh - 55.19px);
   }
-
 }
 </style>

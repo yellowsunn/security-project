@@ -14,10 +14,10 @@
         <li class="delete">삭제</li>
       </ul>
       <template v-if="!isMobile">
-        <UserTable v-for="user in data.users" :user="user"></UserTable>
+        <UserTable v-for="user in data.users" :user="user" :key="user.username"></UserTable>
       </template>
       <template v-else>
-        <UserTableMobile v-for="user in data.users" :user="user"></UserTableMobile>
+        <UserTableMobile v-for="user in data.users" :user="user" :key="user.username"></UserTableMobile>
       </template>
     </div>
   </section>
@@ -81,8 +81,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 24px;
-
+  padding: 24px;
   .search_box {
     width: 100%;
     display: flex;
@@ -104,14 +103,12 @@ section {
     border-radius: 4px;
     box-shadow: 0 0 3px 1px #d9d9d9;
     background-color: white;
-
     .title {
       padding: $normal-padding;
       span {
         color: #4383ee;
       }
     }
-
     ul {
       .username, .role {
         flex: 1 1 25%;

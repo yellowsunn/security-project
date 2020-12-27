@@ -63,7 +63,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
 
 section {
@@ -75,74 +75,66 @@ section {
   background: #f7f7f7;
   font-family: 'Rubik', sans-serif;
   font-size: 1.25rem;
-}
-
-section .register_container {
-  display: flex;
-  flex-direction: column;
-  background: #fdfdfd;
-  width: 25em;
-  height: 26.875em;
-  padding: 0 2em;
-  border-radius: 0.625em;
-  box-shadow: 0.0625em 0.0625em 0.625em 0.0625em #e2e2e2;
-}
-
-section .register_container .form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-section .register_container .form .title {
-  font-size: 2.25em;
-  text-align: center;
-  color: #373c3f;
-  margin: .622em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-section .register_container .form .info {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-section .register_container .form .info .input_box {
-  background: #e3e9e9;
-  height: 2.6em;
-  margin-bottom: 1.25em;
-  font-size: 1em;
-}
-
-section .register_container .form .info .confirm_input_box {
-  height: 3.85em;
-  margin-bottom: .45em;
-}
-
-section .register_container .form .info .confirm_input_box .input_box {
-  margin-bottom: 0;
-}
-
-section .register_container .form .submit_btn {
-  margin-bottom: 1.25em;
-  font-size: 1.125em;
-  height: 3em;
-}
-
-section .register_container .etc .login {
-  color: #8e8e8e;
-  font-size: 0.8em;
-  margin-bottom: 0.6em;
-}
-
-section .register_container .etc .error_log {
-  color: #b71c1c;
-  font-size: 0.9em;
-  font-style: italic;
+  .register_container {
+    display: flex;
+    flex-direction: column;
+    background: #fdfdfd;
+    width: 25em;
+    height: 26.875em;
+    padding: 0 2em;
+    border-radius: 0.625em;
+    box-shadow: 0.0625em 0.0625em 0.625em 0.0625em #e2e2e2;
+    .form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .title {
+        font-size: 2.25em;
+        text-align: center;
+        color: #373c3f;
+        margin: .622em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        .input_box {
+          background: #e3e9e9;
+          height: 2.6em;
+          margin-bottom: 1.25em;
+          font-size: 1em;
+        }
+        .confirm_input_box {
+          height: 3.85em;
+          margin-bottom: .45em;
+          .input_box {
+            margin-bottom: 0;
+          }
+        }
+      }
+      .submit_btn {
+        margin-bottom: 1.25em;
+        font-size: 1.125em;
+        height: 3em;
+      }
+    }
+    .etc {
+      .login {
+        color: #8e8e8e;
+        font-size: 0.8em;
+        margin-bottom: 0.6em;
+      }
+      .error_log {
+        color: #b71c1c;
+        font-size: 0.9em;
+        font-style: italic;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 48em) {

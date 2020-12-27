@@ -18,7 +18,6 @@ export const store = new Vuex.Store({
       isLogin: false
     },
     isLogin: false,
-    toggleMenu: false
   },
   actions: {
     async FETCH_LOGIN_STATUS() {
@@ -36,12 +35,6 @@ export const store = new Vuex.Store({
     async FETCH_ADMIN() {
       return await fetchAdmin();
     },
-    FETCH_TOGGLE_CHANGE({ commit }) {
-      commit('SET_TOGGLE_CHANGE');
-    },
-    FETCH_TOGGLE_OFF({ commit }) {
-      commit('SET_TOGGLE_OFF');
-    }
   },
   mutations: {
     SET_LOGIN_STATUS(state, user) {
@@ -49,11 +42,5 @@ export const store = new Vuex.Store({
       state.user.name = user.username;
       state.user.role = user.role;
     },
-    SET_TOGGLE_CHANGE(state) {
-      state.toggleMenu = !state.toggleMenu;
-    },
-    SET_TOGGLE_OFF(state) {
-      state.toggleMenu = false;
-    }
   }
 });

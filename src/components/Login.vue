@@ -58,7 +58,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
 
 label {
@@ -74,98 +74,88 @@ section {
   background: #f7f7f7;
   font-family: 'Rubik', sans-serif;
   font-size: 1.25rem;
-}
-
-section .login_container {
-  display: flex;
-  flex-direction: column;
-  background: #fdfdfd;
-  width: 25em;
-  height: 26.875em;
-  padding: 0 2em;
-  border-radius: 0.625em;
-  box-shadow: 0.0625em 0.0625em 0.625em 0.0625em #e2e2e2;
-}
-
-section .login_container .form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-section .login_container .form .title {
-  font-size: 2.25em;
-  text-align: center;
-  color: #373c3f;
-  margin: .622em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-section .login_container .form .info {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-section .login_container .form .info .input_box {
-  background: #e3e9e9;
-  height: 3em;
-  margin-bottom: 1.25em;
-  font-size: 1em;
-}
-
-section .login_container .form .info .check_box {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.25em;
-  font-size: 0.8em;
-  color: #4e555b;
-  text-align: center;
-}
-
-section .login_container .form .info .check_box #checkbox {
-  zoom: 1.5;
-  margin-right: 0.5em;
-}
-
-section .login_container .form .submit_btn {
-  margin-bottom: 1.25em;
-  font-size: 1.125em;
-  height: 3em;
-}
-
-section .login_container .etc .register {
-  color: #8e8e8e;
-  font-size: 0.8em;
-  margin-bottom: 0.6em;
-}
-
-section .login_container .etc .error_log {
-  color: #b71c1c;
-  margin-left: 0.25em;
-  font-style: italic;
+  .login_container {
+    display: flex;
+    flex-direction: column;
+    background: #fdfdfd;
+    width: 25em;
+    height: 26.875em;
+    padding: 0 2em;
+    border-radius: 0.625em;
+    box-shadow: 0.0625em 0.0625em 0.625em 0.0625em #e2e2e2;
+    .form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .title {
+        font-size: 2.25em;
+        text-align: center;
+        color: #373c3f;
+        margin: .622em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        .input_box {
+          background: #e3e9e9;
+          height: 3em;
+          margin-bottom: 1.25em;
+          font-size: 1em;
+        }
+        .check_box {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1.25em;
+          font-size: 0.8em;
+          color: #4e555b;
+          text-align: center;
+          #checkbox {
+            zoom: 1.5;
+            margin-right: 0.5em;
+          }
+        }
+      }
+      .submit_btn {
+        margin-bottom: 1.25em;
+        font-size: 1.125em;
+        height: 3em;
+      }
+    }
+    .etc {
+      .register {
+        color: #8e8e8e;
+        font-size: 0.8em;
+        margin-bottom: 0.6em;
+      }
+      .error_log {
+        color: #b71c1c;
+        margin-left: 0.25em;
+        font-style: italic;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 48em) {
   section {
     font-size: 1rem;
-  }
-
-  section .login_container .form .info .check_box #checkbox {
-    zoom: 1.2;
+    .login_container .form .info .check_box #checkbox {
+      zoom: 1.2;
+    }
   }
 }
 
 @media screen and (max-width: 30em) {
   section {
     font-size: 0.8rem;
-  }
-
-  section .login_container .form .info .check_box #checkbox {
-    zoom: 0.96;
+    .login_container .form .info .check_box #checkbox {
+      zoom: 0.96;
+    }
   }
 }
 </style>

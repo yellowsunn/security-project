@@ -19,8 +19,8 @@ export default {
 
 <style scoped>
 .admin {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   background-color: #eeeeee;
 }
 </style>
