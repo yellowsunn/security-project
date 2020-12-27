@@ -1,9 +1,9 @@
 <template>
   <ul class="data">
-    <li class="username">admin</li>
-    <li class="password">{bcrypt}$2a$10$5ZtFuEFw2i6VkUsDgA5DT.IPnuQZM1RP3zEKk5vQm6ONqms/pGv66	</li>
+    <li class="username">{{ user.username }}</li>
+    <li class="password">{{ user.password }}</li>
     <li class="role">
-      <div v-if="!edit">ROLE_ADMIN</div>
+      <div v-if="!edit">{{ user.role }}</div>
       <div v-else>
         <select v-model="selected">
           <option value="ROLE_ADMIN">ROLE_ADMIN</option>
@@ -19,10 +19,13 @@
 
 <script>
 export default {
+  props: {
+    user: Object
+  },
   data() {
     return {
       edit: false,
-      selected: "ROLE_MANAGER"
+      selected: this.user.role
     }
   }
 };

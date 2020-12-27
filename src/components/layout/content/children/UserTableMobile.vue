@@ -3,7 +3,7 @@
     <div class="label" @click="changeToggle">
       <div>
         <i class="fas fa-user-circle"></i>
-        <span>admin</span>
+        <span>{{ user.username }}</span>
       </div>
       <div>
         <i class="fas" :class="toggle ? 'fa-minus' : 'fa-plus'"></i>
@@ -13,15 +13,15 @@
       <ul>
         <li class="username">
           <span>아이디: </span>
-          <div>admin</div>
+          <div>{{ user.username }}</div>
         </li>
         <li class="password">
           <span>비밀번호: </span>
-          <div id="password">{bcrypt}$2a$10$5ZtFuEFw2i6VkUsDgA5DT.IPnuQZM1RP3zEKk5vQm6ONqms/pGv66</div>
+          <div id="password">{{ user.password }}</div>
         </li>
         <li class="role">
           <span>권한: </span>
-          <div v-if="!edit">ROLE_ADMIN</div>
+          <div v-if="!edit">{{ user.role }}</div>
           <div v-else>
             <select v-model="selected">
               <option value="ROLE_ADMIN">ROLE_ADMIN</option>
@@ -46,11 +46,14 @@ export default {
   components: {
     VueSlideToggle
   },
+  props: {
+    user: Object
+  },
   data() {
     return {
       toggle: false,
       edit: false,
-      selected: "ROLE_MANAGER"
+      selected: this.user.role
     }
   },
   methods: {

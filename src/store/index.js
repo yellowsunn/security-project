@@ -5,6 +5,7 @@ import {
   fetchLogout,
   fetchLogin,
   fetchRegister,
+  fetchAdmin
 } from '@/api';
 
 Vue.use(Vuex);
@@ -31,6 +32,9 @@ export const store = new Vuex.Store({
     },
     async FETCH_REGISTER(context, account) {
       return await fetchRegister(account);
+    },
+    async FETCH_ADMIN() {
+      return await fetchAdmin();
     },
     FETCH_TOGGLE_CHANGE({ commit }) {
       commit('SET_TOGGLE_CHANGE');

@@ -34,9 +34,14 @@ const fetchRegister = async (account) => {
   return await axios.post('/register', account, config);
 };
 
+const fetchAdmin = async () => {
+  return await axios.get('/admin', config);
+}
+
 export {
   fetchLoginStatus,
   fetchLogout,
   fetchLogin,
   fetchRegister,
+  fetchAdmin
 };
