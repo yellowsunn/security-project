@@ -54,6 +54,7 @@ select {
   .password {
     flex: 1 1 40%;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding-right: 64px;
   }

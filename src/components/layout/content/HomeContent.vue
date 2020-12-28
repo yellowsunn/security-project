@@ -1,14 +1,14 @@
 <template>
   <section>
     <i class="fas" :class="{
-      'fa-user-alt-slash': !userInfo.isLogin,
-      'fa-user-alt': userInfo.role === 'USER',
-      'fa-user-cog': userInfo.role === 'MANAGER',
-      'fa-user-tie': userInfo.role === 'ADMIN'
+      'fa-user-alt-slash': unauthorized,
+      'fa-user-alt': !unauthorized && (userInfo.role === 'USER'),
+      'fa-user-cog': !unauthorized && (userInfo.role === 'MANAGER'),
+      'fa-user-tie': !unauthorized && (userInfo.role === 'ADMIN')
     }"></i>
-    <span v-if="!userInfo.isLogin" class="title">로그인이 필요합니다</span>
+    <span v-if="unauthorized" class="title">로그인이 필요합니다</span>
     <div v-else class="title">
-      <div>어서오세요! <span class="name">'{{ userInfo.name }}'</span>님</div>
+      <div>어서오세요! <span class="name">'{{ userInfo.username }}'</span>님</div>
       <div class="role">(권한: {{ userInfo.role }})</div>
     </div>
   </section>
@@ -18,9 +18,12 @@
 export default {
   computed: {
     userInfo() {
-      return this.$store.state.user;
+      return this.$store.state.userInfo;
+    },
+    unauthorized() {
+      return this.$store.getters.unauthorized;
     }
-  }
+  },
 };
 </script>
 

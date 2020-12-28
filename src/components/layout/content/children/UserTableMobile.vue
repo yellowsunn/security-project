@@ -105,6 +105,7 @@ select {
         }
         div {
           text-overflow: ellipsis;
+          white-space: nowrap;
           overflow: hidden;
           padding-right: 10%;
           flex: 1 1 70%;

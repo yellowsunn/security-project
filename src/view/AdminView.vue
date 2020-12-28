@@ -1,7 +1,8 @@
 <template>
-  <div class="admin">
+  <div class="admin" :class="{ 'background' : !forbidden }">
     <Header></Header>
-    <AdminContent></AdminContent>
+    <AdminContent v-if="!forbidden"></AdminContent>
+    <div v-else>forbidden</div>
   </div>
 </template>
 
@@ -13,6 +14,11 @@ export default {
   components: {
     Header,
     AdminContent,
+  },
+  computed: {
+    forbidden() {
+      return this.$store.getters.forbidden;
+    }
   }
 };
 </script>
@@ -21,6 +27,8 @@ export default {
 .admin {
   width: 100%;
   min-height: 100vh;
+}
+.background {
   background-color: #eeeeee;
 }
 </style>

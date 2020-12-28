@@ -1,11 +1,11 @@
 import Vue from 'vue';
+import { store } from '@/store';
 import VueRouter from 'vue-router';
 import HomeView from '@/view/HomeView';
 import Login from '@/components/Login';
 import Register from '@/components/Register';
 import UserView from '@/view/UserView';
 import ManagerView from '@/view/ManagerView';
-import { loginCheck, onlyLoginCheck, logout } from '@/router/common/loginCheck';
 import AdminView from '@/view/AdminView';
 
 Vue.use(VueRouter);
@@ -16,7 +16,7 @@ export const router = new VueRouter({
     {
       path: '/',
       component: HomeView,
-      beforeEnter: onlyLoginCheck
+      beforeEnter: fetchData
     },
     {
       path: '/register',
@@ -28,22 +28,50 @@ export const router = new VueRouter({
     },
     {
       path: '/logout',
-      beforeEnter: logout
+      beforeEnter: async (to, from, next) => {
+        try {
+          await store.dispatch('FETCH_LOGOUT');
+        } catch (error) {
+          console.log(error.data);
+        }
+        next("/");
+      }
     },
     {
       path: '/user',
       component: UserView,
-      beforeEnter: loginCheck
+      beforeEnter: fetchData
     },
     {
       path: '/manager',
       component: ManagerView,
-      beforeEnter: loginCheck
+      beforeEnter: fetchData
     },
     {
       path: '/admin',
       component: AdminView,
-      beforeEnter: loginCheck
+      beforeEnter: fetchData
     }
   ]
 });
+
+async function fetchData(to, from, next) {
+  let path = to.path;
+  if (path === '/') path = '/home';
+
+  await store.dispatch('FETCH_DATA', path);
+
+  if (path !== '/home') {
+    checkLogin(next);
+  } else {
+    next();
+  }
+}
+
+function checkLogin(next) {
+  if (store.getters.unauthorized) {
+    next('/login');
+  } else {
+    next();
+  }
+}

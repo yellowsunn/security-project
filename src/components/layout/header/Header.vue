@@ -16,9 +16,9 @@
     </VueSlideToggle>
     <Menu v-else></Menu>
     <div class="user_info">
-      <router-link v-show="!loginStatus" to="/login" class="login">Login</router-link>
-      <router-link v-show="!loginStatus" to="/register" class="register">Register</router-link>
-      <a v-show="loginStatus" href="/logout" class="logout">Sign out</a>
+      <router-link v-if="unauthorized" to="/login" class="login">Login</router-link>
+      <router-link v-if="unauthorized" to="/register" class="register">Register</router-link>
+      <a v-if="!unauthorized" href="/logout" class="logout">Sign out</a>
     </div>
   </header>
 </template>
@@ -50,8 +50,8 @@ export default {
     })
   },
   computed: {
-    loginStatus() {
-      return this.$store.state.user.isLogin;
+    unauthorized() {
+      return this.$store.getters.unauthorized;
     }
   },
 };

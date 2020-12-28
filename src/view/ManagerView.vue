@@ -1,7 +1,8 @@
 <template>
   <div>
     <Header></Header>
-    <ManagerContent></ManagerContent>
+    <ManagerContent v-if="!forbidden"></ManagerContent>
+    <div v-else>forbidden</div>
   </div>
 </template>
 
@@ -12,6 +13,11 @@ export default {
   components: {
     Header,
     ManagerContent
+  },
+  computed: {
+    forbidden() {
+      return this.$store.getters.forbidden;
+    }
   }
 };
 </script>

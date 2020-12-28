@@ -35,30 +35,20 @@ export default {
   data() {
     const mql = window.matchMedia("screen and (max-width: 768px)");
     return {
-      data: {
-        size: 0,
-        users: []
-      },
       mql,
       isMobile: mql.matches
     }
   },
+  computed: {
+    data() {
+      return this.$store.getters.adminData;
+    }
+  },
   mounted() {
-    this.fetchData();
     this.mql.addEventListener("change", e => {
       this.isMobile = e.matches;
     });
   },
-  methods: {
-    async fetchData() {
-      try {
-        const response = await this.$store.dispatch('FETCH_ADMIN');
-        this.data = response.data;
-      } catch (error) {
-        console.log(error.data);
-      }
-    },
-  }
 };
 </script>
 
