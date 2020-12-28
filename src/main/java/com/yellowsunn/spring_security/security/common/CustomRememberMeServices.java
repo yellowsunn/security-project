@@ -1,6 +1,6 @@
-package com.yellowsunn.spring_security.security.service;
+package com.yellowsunn.spring_security.security.common;
 
-import com.yellowsunn.spring_security.domain.entity.Account;
+import com.yellowsunn.spring_security.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,9 +23,8 @@ public class CustomRememberMeServices extends TokenBasedRememberMeServices {
     @Override
     public void onLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
         // 수정한 부분
-        String username = ((Account) successfulAuthentication.getPrincipal()).getUsername();
-        String password = ((Account) successfulAuthentication.getPrincipal()).getPassword();
-
+        String username = ((UserDetails) successfulAuthentication.getPrincipal()).getUsername();
+        String password = ((CustomUserDetails) successfulAuthentication.getPrincipal()).getAccount().getPassword();
 
         // If unable to find a username and password, just abort as
         // TokenBasedRememberMeServices is

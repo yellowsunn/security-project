@@ -1,12 +1,11 @@
 package com.yellowsunn.spring_security.security.config;
 
-import com.yellowsunn.spring_security.security.filter.CustomLoginProcessingFilter;
+import com.yellowsunn.spring_security.security.filter.CustomAuthenticationProcessingFilter;
 import com.yellowsunn.spring_security.security.handler.CustomAuthenticationFailureHandler;
 import com.yellowsunn.spring_security.security.handler.CustomAuthenticationSuccessHandler;
 import com.yellowsunn.spring_security.security.provider.CustomAuthenticationProvider;
-import com.yellowsunn.spring_security.security.service.CustomRememberMeServices;
+import com.yellowsunn.spring_security.security.common.CustomRememberMeServices;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,28 +13,23 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -45,15 +39,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REMEMBER_ME_KEY = "yellowsunn_key";
 
     private final UserDetailsService userDetailsService;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(customAuthenticationProvider());
+        auth.authenticationProvider(authenticationProvider());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                // 인가 API
                 .antMatcher("/api/**")
                 .authorizeRequests()
                 .antMatchers("/api/register").permitAll()
@@ -62,24 +58,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
+                // 로그아웃 처리
                 .and().logout()
                 .logoutUrl("/api/logout")
-                .logoutSuccessHandler((request, response, authentication) -> {}) // 로그아웃 후 아무작업 안함
+                .logoutSuccessHandler((request, response, authentication) -> {})
                 .deleteCookies("JSESSIONID", "remember-me")
 
+                // 예외 처리
+                .and().exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint) // 인증 실패시 처리
+
+                // Remember Me 인증
                 .and().rememberMe()
                 .key(REMEMBER_ME_KEY)
-                .rememberMeServices(customRememberMeServices())
+                .rememberMeServices(rememberMeServices())
 
+                // csrf
                 .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
+                // 동시 세션 제어 (이전 사용자 세션 만료)
                 .and().sessionManagement()
                 .maximumSessions(1)
                 .sessionRegistry(sessionRegistry());
 
-        http.addFilterBefore(customLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+        // Custom 인증 필터가 우선 동작
+        http.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.cors();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -99,38 +109,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    public AbstractAuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
+        CustomAuthenticationProcessingFilter authenticationProcessingFilter = new CustomAuthenticationProcessingFilter();
+        authenticationProcessingFilter.setAuthenticationManager(super.authenticationManagerBean());
+        authenticationProcessingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        authenticationProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        authenticationProcessingFilter.setRememberMeServices(rememberMeServices());
+        authenticationProcessingFilter.setSessionAuthenticationStrategy(sessionStrategy());
+        return authenticationProcessingFilter;
     }
 
     @Bean
-    public AuthenticationProvider customAuthenticationProvider() {
+    public AuthenticationProvider authenticationProvider() {
         return new CustomAuthenticationProvider(userDetailsService, passwordEncoder());
     }
 
     @Bean
-    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler(sessionRegistry());
     }
 
     @Bean
-    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+    public AuthenticationFailureHandler authenticationFailureHandler() {
         return new CustomAuthenticationFailureHandler();
     }
 
     @Bean
-    public AbstractAuthenticationProcessingFilter customLoginProcessingFilter() throws Exception {
-        CustomLoginProcessingFilter customLoginProcessingFilter = new CustomLoginProcessingFilter();
-        customLoginProcessingFilter.setRememberMeServices(customRememberMeServices());
-        customLoginProcessingFilter.setAuthenticationManager(super.authenticationManagerBean());
-        customLoginProcessingFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler());
-        customLoginProcessingFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler());
-        customLoginProcessingFilter.setSessionAuthenticationStrategy(sessionStrategy());
-        return customLoginProcessingFilter;
-    }
-
-    @Bean
-    public AbstractRememberMeServices customRememberMeServices() {
+    public AbstractRememberMeServices rememberMeServices() {
         CustomRememberMeServices rememberMeServices = new CustomRememberMeServices(REMEMBER_ME_KEY, userDetailsService);
         rememberMeServices.setAlwaysRemember(false);
         rememberMeServices.setParameter("rememberMe");
@@ -140,11 +145,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
-    }
-
-    @Bean
-    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() { //(5)
-        return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
     }
 
     @Bean

@@ -24,11 +24,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
         // 패스워드 검증
-        if (!passwordEncoder.matches(password, userDetails.getAccount().getPassword())) {
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("BadCredentialsException");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails.getAccount(), null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     @Override
