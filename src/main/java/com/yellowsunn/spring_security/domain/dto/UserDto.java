@@ -13,8 +13,10 @@ public class UserDto {
 
     private String username;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String password;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String role;
 }
 

@@ -32,10 +32,6 @@ public class InitDB {
         private final PasswordEncoder passwordEncoder;
 
         public void dbInit() {
-            Account account = Account.builder()
-                    .username("admin")
-                    .password(passwordEncoder.encode("1111"))
-                    .build();
 
             Role roleUser = Role.builder()
                     .name("ROLE_USER")
@@ -49,14 +45,48 @@ public class InitDB {
                     .name("ROLE_ADMIN")
                     .build();
 
+            Account root = Account.builder()
+                    .username("root")
+                    .password(passwordEncoder.encode("1111"))
+                    .build();
+
+            Account admin = Account.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("1111"))
+                    .build();
+
+            Account manager = Account.builder()
+                    .username("manager")
+                    .password(passwordEncoder.encode("1111"))
+                    .build();
+
+            Account user = Account.builder()
+                    .username("user")
+                    .password(passwordEncoder.encode("1111"))
+                    .build();
+
             em.persist(roleUser);
             em.persist(roleManager);
             em.persist(roleAdmin);
             em.persist(AccountRole.builder()
-                    .account(account)
+                    .account(root)
                     .role(roleAdmin)
                     .build());
 
+            em.persist(AccountRole.builder()
+                    .account(admin)
+                    .role(roleAdmin)
+                    .build());
+
+            em.persist(AccountRole.builder()
+                    .account(manager)
+                    .role(roleManager)
+                    .build());
+
+            em.persist(AccountRole.builder()
+                    .account(user)
+                    .role(roleUser)
+                    .build());
 
             // 계층구조 설정
             RoleHierarchy userHierarchy = RoleHierarchy.builder()

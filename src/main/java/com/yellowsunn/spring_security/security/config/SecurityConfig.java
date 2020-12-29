@@ -1,15 +1,16 @@
 package com.yellowsunn.spring_security.security.config;
 
+import com.yellowsunn.spring_security.security.common.CustomRememberMeServices;
 import com.yellowsunn.spring_security.security.filter.CustomAuthenticationProcessingFilter;
 import com.yellowsunn.spring_security.security.handler.CustomAuthenticationFailureHandler;
 import com.yellowsunn.spring_security.security.handler.CustomAuthenticationSuccessHandler;
 import com.yellowsunn.spring_security.security.provider.CustomAuthenticationProvider;
-import com.yellowsunn.spring_security.security.common.CustomRememberMeServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -33,6 +34,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

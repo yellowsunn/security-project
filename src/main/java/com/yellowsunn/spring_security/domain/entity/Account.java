@@ -18,4 +18,8 @@ public class Account {
     private String username;
 
     private String password;
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

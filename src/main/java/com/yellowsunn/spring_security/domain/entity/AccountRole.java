@@ -20,4 +20,13 @@ public class AccountRole {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    public boolean changeRole(Role role) {
+        if (this.role != role) {
+            this.role = role;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

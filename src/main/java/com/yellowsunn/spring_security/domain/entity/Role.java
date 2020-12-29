@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor @Builder
 @Getter
+@EqualsAndHashCode(of = "name")
 public class Role {
     @Id @GeneratedValue
     @Column(name = "role_id")

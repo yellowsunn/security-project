@@ -3,6 +3,7 @@ package com.yellowsunn.spring_security.controller.api;
 import com.yellowsunn.spring_security.domain.dto.UserDto;
 import com.yellowsunn.spring_security.domain.dto.UsersDto;
 import com.yellowsunn.spring_security.security.CustomUserDetails;
+import com.yellowsunn.spring_security.service.SecurityService;
 import com.yellowsunn.spring_security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,16 +22,11 @@ import java.util.stream.Collectors;
 public class SecurityController {
 
     private final UserService userService;
+    private final SecurityService securityService;
 
     @GetMapping("/home")
     public UserDto userInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        UserDto.UserDtoBuilder userDtoBuilder = UserDto.builder();
-        setUsername(authentication, userDtoBuilder);
-        setAuthority(authentication, userDtoBuilder);
-
-        return userDtoBuilder.build();
+        return securityService.currentUserInfo();
     }
 
     @GetMapping("/user")
@@ -48,22 +44,5 @@ public class SecurityController {
         return userService.findAll();
     }
 
-    private void setUsername(Authentication authentication, UserDto.UserDtoBuilder userDtoBuilder) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        userDtoBuilder.username(customUserDetails.getUsername());
-    }
 
-    private void setAuthority(Authentication authentication, UserDto.UserDtoBuilder userDtoBuilder) {
-        Set<String> authorities = authentication.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-
-        if (authorities.contains("ROLE_ADMIN")) {
-            userDtoBuilder.role("ADMIN");
-        } else if (authorities.contains("ROLE_MANAGER")) {
-            userDtoBuilder.role("MANAGER");
-        } else if (authorities.contains("ROLE_USER")) {
-            userDtoBuilder.role("USER");
-        }
-    }
 }
