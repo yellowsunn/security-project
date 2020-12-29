@@ -17,13 +17,16 @@
         </li>
         <li class="password">
           <span>비밀번호: </span>
-          <div id="password">{{ user.password }}</div>
+          <div v-if="edit">
+            <input type="password" v-model="data.password" :placeholder="user.password">
+          </div>
+          <div id="password" v-else>{{ user.password }}</div>
         </li>
         <li class="role">
           <span>권한: </span>
           <div v-if="!edit">{{ user.role }}</div>
           <div v-else>
-            <select v-model="selected">
+            <select v-model="data.role">
               <option value="ROLE_ADMIN">ROLE_ADMIN</option>
               <option value="ROLE_MANAGER">ROLE_MANAGER</option>
               <option value="ROLE_USER">ROLE_USER</option>
@@ -32,8 +35,9 @@
         </li>
       </ul>
       <div class="buttons">
-        <div class="edit" @click="edit = !edit" v-text="edit ? '적용' : '수정'"></div>
-        <div class="delete">삭제</div>
+        <div class="edit" v-if="!edit" :class="{'root' : isRoot}" @click="!isRoot ? edit = !edit : undefined">수정</div>
+        <div class="edit" v-else @click="fetchUpdate">적용</div>
+        <div class="delete" :class="{'root' : isRoot}">삭제</div>
       </div>
     </VueSlideToggle>
   </div>
@@ -53,13 +57,32 @@ export default {
     return {
       toggle: false,
       edit: false,
-      selected: this.user.role
+      data: {
+        username: this.user.username,
+        password: "",
+        role: this.user.role,
+      }
+    }
+  },
+  computed: {
+    isRoot() {
+      return this.user.username === 'root';
     }
   },
   methods: {
     changeToggle() {
       this.toggle= !this.toggle;
     },
+    fetchUpdate() {
+      if (!(this.data.password === "" && this.user.role === this.data.role)) {
+        this.$store.dispatch('FETCH_UPDATE', this.data);
+        this.data = {
+          ...this.data,
+          password: "",
+        };
+      }
+      this.edit = !this.edit;
+    }
   }
 };
 </script>
@@ -109,20 +132,21 @@ select {
           overflow: hidden;
           padding-right: 10%;
           flex: 1 1 70%;
+          input[type="password"] {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #aaaaaa;
+            padding-left: 4px;
+            &:focus {
+              outline: none;
+            }
+          }
         }
       }
     }
     .buttons {
       display: flex;
-      .edit, .delete {
-        flex: 1 1 50%;
-        text-align: center;
-        padding: 4px 0;
-        border-radius: 4px;
-        color: white;
-      }
       .edit {
-        cursor: pointer;
         background-color: #38b97b;
         margin: 8px 8px 16px 16px;
         &:hover {
@@ -130,12 +154,22 @@ select {
         }
       }
       .delete {
-        cursor: pointer;
         background-color: #f14541;
         margin: 8px 16px 16px 8px;
         &:hover {
           background-color: #ee615f;
         }
+      }
+      .edit, .delete {
+        flex: 1 1 50%;
+        text-align: center;
+        padding: 4px 0;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+      }
+      .root {
+        cursor: not-allowed;
       }
     }
   }

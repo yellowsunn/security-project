@@ -1,6 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { fetchLogin, fetchLogout, fetchRegister, fetchData } from '@/api';
+import {
+  fetchLogin,
+  fetchLogout,
+  fetchRegister,
+  fetchData,
+  fetchUpdate,
+} from '@/api';
 
 Vue.use(Vuex);
 
@@ -61,6 +67,14 @@ export const store = new Vuex.Store({
         console.log(error);
       }
     },
+    async FETCH_UPDATE({ dispatch }, data) {
+      try {
+        await fetchUpdate(data);
+        dispatch('FETCH_DATA', '/admin');
+      } catch (error) {
+        console.log(error);
+      }
+    }
   },
   mutations: {
     SET_USER_INFO(state, user) {

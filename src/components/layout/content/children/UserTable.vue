@@ -1,19 +1,25 @@
 <template>
   <ul class="data">
     <li class="username">{{ user.username }}</li>
-    <li class="password">{{ user.password }}</li>
+    <li class="password">
+      <input type="password" v-if="edit" v-model="data.password" :placeholder="user.password">
+      <span v-else>{{ user.password }}</span>
+    </li>
     <li class="role">
       <div v-if="!edit">{{ user.role }}</div>
       <div v-else>
-        <select v-model="selected">
+        <select v-model="data.role">
           <option value="ROLE_ADMIN">ROLE_ADMIN</option>
           <option value="ROLE_MANAGER">ROLE_MANAGER</option>
           <option value="ROLE_USER">ROLE_USER</option>
         </select>
       </div>
     </li>
-    <li class="edit"><i class="fas" :class="edit ? 'fa-check' : 'fa-pen'" @click="edit = !edit"></i></li>
-    <li class="delete"><i class="fas fa-trash-alt"></i></li>
+    <li class="edit">
+      <i class="fas fa-pen" v-if="!edit" :class="{'root' : isRoot}" @click="!isRoot ? edit = !edit : undefined"></i>
+      <i class="fas fa-check" v-else @click="fetchUpdate"></i>
+    </li>
+    <li class="delete"><i class="fas fa-trash-alt" :class="{'root' : isRoot}"></i></li>
   </ul>
 </template>
 
@@ -25,7 +31,28 @@ export default {
   data() {
     return {
       edit: false,
-      selected: this.user.role
+      data: {
+        username: this.user.username,
+        password: "",
+        role: this.user.role,
+      },
+    }
+  },
+  computed: {
+    isRoot() {
+      return this.user.username === 'root';
+    }
+  },
+  methods: {
+    fetchUpdate() {
+        if (!(this.data.password === "" && this.user.role === this.data.role)) {
+        this.$store.dispatch('FETCH_UPDATE', this.data);
+        this.data = {
+          ...this.data,
+          password: "",
+        };
+      }
+      this.edit = !this.edit;
     }
   }
 };
@@ -57,6 +84,15 @@ select {
     white-space: nowrap;
     overflow: hidden;
     padding-right: 64px;
+    input {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #aaaaaa;
+      padding-left: 4px;
+      &:focus {
+        outline: none;
+      }
+    }
   }
   .edit, .delete {
     flex: 1 1 5%;
@@ -65,6 +101,10 @@ select {
     .fas {
       cursor: pointer;
     }
+    .root {
+      cursor: not-allowed;
+    }
   }
+
 }
 </style>

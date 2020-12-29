@@ -34,9 +34,14 @@ const fetchData = async (url) => {
   return await axios.get(url, config);
 }
 
+const fetchUpdate = async (data) => {
+  return await axios.put('/update', data, config);
+}
+
 export {
   fetchLogin,
   fetchLogout,
   fetchRegister,
-  fetchData
+  fetchData,
+  fetchUpdate
 };
