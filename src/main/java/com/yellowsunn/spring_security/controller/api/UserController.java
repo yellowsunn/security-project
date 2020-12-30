@@ -20,9 +20,14 @@ public class UserController {
         userService.register(userDto);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/admin/update")
     public void update(@RequestBody UserDto userDto) {
         userService.update(userDto);
+    }
+
+    @DeleteMapping("/admin/delete")
+    public void delete(@RequestBody UserDto userDto) {
+        userService.delete(userDto.getUsername());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

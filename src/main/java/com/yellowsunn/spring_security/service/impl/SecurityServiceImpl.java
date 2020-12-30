@@ -9,9 +9,11 @@ import com.yellowsunn.spring_security.repository.AccountRepository;
 import com.yellowsunn.spring_security.repository.AccountRoleRepository;
 import com.yellowsunn.spring_security.repository.RoleHierarchyRepository;
 import com.yellowsunn.spring_security.security.CustomUserDetails;
+import com.yellowsunn.spring_security.security.config.SecurityConfig;
 import com.yellowsunn.spring_security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,6 +51,12 @@ public class SecurityServiceImpl implements SecurityService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
+            // RememberMe 토큰일경우 UsernamePasswordAuthenticationToken 로 변경
+            if (auth instanceof RememberMeAuthenticationToken) {
+                Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), null, auth.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(newAuth);
+            }
+
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             Optional<Account> accountOptional = accountRepository.findByUsername(userDetails.getUsername());
             if (accountOptional.isEmpty()) {

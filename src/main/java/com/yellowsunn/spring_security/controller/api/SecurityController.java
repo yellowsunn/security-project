@@ -43,6 +43,4 @@ public class SecurityController {
     public UsersDto admin() {
         return userService.findAll();
     }
-
-
 }

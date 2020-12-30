@@ -11,5 +11,7 @@ public interface UserService {
     @Secured("ROLE_ADMIN")
     void update(UserDto userDto);
 
+    void delete(String username);
+
     UsersDto findAll();
 }

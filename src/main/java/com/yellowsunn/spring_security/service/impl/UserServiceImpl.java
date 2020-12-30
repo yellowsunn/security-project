@@ -52,14 +52,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserDto userDto) {
-        Optional<Account> accountOptional = accountRepository.findByUsername(userDto.getUsername());
-        if (accountOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid account");
-        }
-        Account account = accountOptional.get();
+        accountRepository.findByUsername(userDto.getUsername())
+                .ifPresentOrElse(account -> {
+                    updatePassword(userDto, account);
+                    updateRole(userDto, account);
+                }, () -> {
+                    throw new IllegalArgumentException("Invalid account");
+                });
+    }
 
-        updatePassword(userDto, account);
-        updateRole(userDto, account);
+    @Override
+    public void delete(String username) {
+        accountRepository.findByUsername(username)
+                .ifPresentOrElse(accountRepository::delete, () -> {
+                    throw new IllegalStateException("Invalid account");
+                });
     }
 
     @Override

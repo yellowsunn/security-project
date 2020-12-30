@@ -38,7 +38,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String REMEMBER_ME_KEY = "yellowsunn_key";
+    public static final String REMEMBER_ME_KEY = "yellowsunn_key";
 
     private final UserDetailsService userDetailsService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/register").permitAll()
                 .antMatchers("/api/user").hasRole("USER")
                 .antMatchers("/api/manager").hasRole("MANAGER")
-                .antMatchers("/api/admin").hasRole("ADMIN")
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
                 // 로그아웃 처리
@@ -128,7 +128,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler(sessionRegistry());
+        return new CustomAuthenticationSuccessHandler();
     }
 
     @Bean
