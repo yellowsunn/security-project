@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final SecurityService securityService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -23,11 +22,7 @@ public class UserController {
 
     @PutMapping("/update")
     public void update(@RequestBody UserDto userDto) {
-        boolean isUpdateRole = userService.update(userDto);
-        if (isUpdateRole) {
-            // 권한이 변경된 경우 SecurityContext 도 변경
-            securityService.changeSecurityContext(userDto);
-        }
+        userService.update(userDto);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

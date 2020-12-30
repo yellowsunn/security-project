@@ -21,12 +21,9 @@ public class AccountRole {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public boolean changeRole(Role role) {
+    public void changeRole(Role role) {
         if (this.role != role) {
             this.role = role;
-            return true;
-        } else {
-            return false;
         }
     }
 }

@@ -9,7 +9,7 @@ public interface UserService {
     void register(UserDto userDto);
 
     @Secured("ROLE_ADMIN")
-    boolean update(UserDto userDto);
+    void update(UserDto userDto);
 
     UsersDto findAll();
 }

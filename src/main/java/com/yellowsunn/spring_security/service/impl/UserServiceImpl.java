@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean update(UserDto userDto) {
+    public void update(UserDto userDto) {
         Optional<Account> accountOptional = accountRepository.findByUsername(userDto.getUsername());
         if (accountOptional.isEmpty()) {
             throw new IllegalArgumentException("Invalid account");
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         Account account = accountOptional.get();
 
         updatePassword(userDto, account);
-        return updateRole(userDto, account);
+        updateRole(userDto, account);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean updateRole(UserDto userDto, Account account) {
+    private void updateRole(UserDto userDto, Account account) {
         Optional<Role> roleOptional = roleRepository.findByName(userDto.getRole());
         if (roleOptional.isEmpty()) {
             throw new IllegalArgumentException("Invalid role");
@@ -105,7 +105,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid account or role");
         }
 
-        // 권한 변경 여부 반환
-        return accountRoleOptional.get().changeRole(roleOptional.get());
+        accountRoleOptional.get().changeRole(roleOptional.get());
     }
 }

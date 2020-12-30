@@ -1,13 +1,17 @@
 package com.yellowsunn.spring_security.service.impl;
 
 import com.yellowsunn.spring_security.domain.dto.UserDto;
+import com.yellowsunn.spring_security.domain.entity.Account;
+import com.yellowsunn.spring_security.domain.entity.AccountRole;
 import com.yellowsunn.spring_security.domain.entity.Role;
 import com.yellowsunn.spring_security.domain.entity.RoleHierarchy;
+import com.yellowsunn.spring_security.repository.AccountRepository;
+import com.yellowsunn.spring_security.repository.AccountRoleRepository;
 import com.yellowsunn.spring_security.repository.RoleHierarchyRepository;
-import com.yellowsunn.spring_security.repository.RoleRepository;
 import com.yellowsunn.spring_security.security.CustomUserDetails;
 import com.yellowsunn.spring_security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,19 +20,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SecurityServiceImpl implements SecurityService {
 
-    private final RoleRepository roleRepository;
     private final RoleHierarchyRepository roleHierarchyRepository;
+    private final AccountRepository accountRepository;
+    private final AccountRoleRepository accountRoleRepository;
 
     @Override
     public UserDto currentUserInfo() {
@@ -42,16 +45,32 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void changeSecurityContext(UserDto userDto) {
+    public void syncAuthority() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // 현재 로그인된 사용자일 경우에 변경
-        if (auth != null && isSameUser(userDto, auth)) {
-            List<GrantedAuthority> authorities = getAuthorities(userDto);
+        if (auth != null) {
+            CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+            Optional<Account> accountOptional = accountRepository.findByUsername(userDetails.getUsername());
+            if (accountOptional.isEmpty()) {
+                throw new IllegalStateException("Invalid account");
+            }
+            Optional<AccountRole> accountRoleOptional = accountRoleRepository.findByAccount(accountOptional.get());
+            if (accountRoleOptional.isEmpty()) {
+                throw new IllegalArgumentException("Invalid account or role");
+            }
 
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), null, authorities);
-            SecurityContextHolder.clearContext();
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
+            Role role = accountRoleOptional.get().getRole();
+            Collection<? extends GrantedAuthority> authAuthorities = auth.getAuthorities();
+
+            List<GrantedAuthority> dbAuthorities = getAuthorities(role);
+
+            // 권한이 DB와 일치하지 않는경우 동기화 작업
+            if (authAuthorities.size() != dbAuthorities.size()) {
+                log.warn("권한이 다르다!");
+                Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), null, dbAuthorities);
+                SecurityContextHolder.clearContext();
+                SecurityContextHolder.getContext().setAuthentication(newAuth);
+            }
         }
     }
 
@@ -74,17 +93,8 @@ public class SecurityServiceImpl implements SecurityService {
         }
     }
 
-    private boolean isSameUser(UserDto userDto, Authentication auth) {
-        return ((CustomUserDetails) auth.getPrincipal()).getUsername().equals(userDto.getUsername());
-    }
-
-    private List<GrantedAuthority> getAuthorities(UserDto userDto) {
-        Optional<Role> roleOptional = roleRepository.findByName(userDto.getRole());
-        if (roleOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid role");
-        }
-
-        Optional<RoleHierarchy> roleHierarchyOptional = roleHierarchyRepository.findByRole(roleOptional.get());
+    private List<GrantedAuthority> getAuthorities(Role role) {
+        Optional<RoleHierarchy> roleHierarchyOptional = roleHierarchyRepository.findByRole(role);
         if (roleHierarchyOptional.isEmpty()) {
             throw new IllegalArgumentException("Invalid role hierarchy");
         }
@@ -99,8 +109,8 @@ public class SecurityServiceImpl implements SecurityService {
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (Role r : roles) {
+            authorities.add(new SimpleGrantedAuthority(r.getName()));
         }
 
         return authorities;
