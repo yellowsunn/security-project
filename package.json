@@ -15,6 +15,7 @@
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.0",
     "vue": "^2.6.11",
+    "vue-debounce": "^2.6.0",
     "vue-router": "^3.4.9",
     "vue-slide-toggle": "^1.1.1",
     "vuex": "^3.6.0"

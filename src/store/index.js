@@ -6,6 +6,7 @@ import {
   fetchRegister,
   fetchData,
   fetchUpdate,
+  fetchSearch
 } from '@/api';
 
 Vue.use(Vuex);
@@ -69,6 +70,14 @@ export const store = new Vuex.Store({
     },
     async FETCH_UPDATE(context, data) {
       return await fetchUpdate(data);
+    },
+    async FETCH_SEARCH({ commit }, search) {
+      try {
+        const response = await fetchSearch(search);
+        commit('SET_ADMIN_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   mutations: {

@@ -38,10 +38,21 @@ const fetchUpdate = async (data) => {
   return await axios.put('/admin/update', data, config);
 }
 
+const fetchSearch = async (search) => {
+  return await axios.get("/admin", {
+    ...config,
+    params: {
+      search,
+      size: 10,
+    }
+  })
+}
+
 export {
   fetchLogin,
   fetchLogout,
   fetchRegister,
   fetchData,
-  fetchUpdate
+  fetchUpdate,
+  fetchSearch
 };

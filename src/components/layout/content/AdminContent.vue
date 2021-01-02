@@ -2,7 +2,7 @@
   <section>
     <div class="search_box">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="전체 사용자 검색">
+      <input type="text" v-model="search" v-debounce:300ms="fetchSearch" placeholder="전체 사용자 검색">
     </div>
     <div class="table_box">
       <div class="title">전체 사용자 <span>{{ data.size }}</span>명</div>
@@ -38,7 +38,8 @@ export default {
     return {
       mql,
       isMobile: mql.matches,
-      websocket
+      websocket,
+      search: ""
     }
   },
   computed: {
@@ -68,6 +69,8 @@ export default {
           }
         });
         console.log(responseData);
+
+        if (findUser === undefined) return;
         findUser.password = responseData.password;
         findUser.role = responseData.role;
       }
@@ -75,6 +78,9 @@ export default {
         console.warn("ERROR: " + evt.data);
       }
     },
+    fetchSearch() {
+      this.$store.dispatch('FETCH_SEARCH', this.search);
+    }
   }
 };
 </script>
