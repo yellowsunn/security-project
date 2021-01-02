@@ -10,6 +10,8 @@ import com.yellowsunn.spring_security.repository.AccountRoleRepository;
 import com.yellowsunn.spring_security.repository.RoleRepository;
 import com.yellowsunn.spring_security.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +72,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserDto> findByUsername(String username) {
+        Optional<Account> accountOptional = accountRepository.findByUsername(username);
+        if (accountOptional.isEmpty()) return Optional.empty();
+
+        Optional<AccountRole> accountRoleOptional = accountRoleRepository.findByAccount(accountOptional.get());
+        if (accountRoleOptional.isEmpty()) return Optional.empty();
+
+        AccountRole accountRole = accountRoleOptional.get();
+        UserDto userDto = UserDto.builder()
+                .username(accountRole.getAccount().getUsername())
+                .password(accountRole.getAccount().getPassword())
+                .role(accountRole.getRole().getName())
+                .build();
+
+        return Optional.ofNullable(userDto);
+    }
+
+    @Override
     public UsersDto findAll() {
         List<AccountRole> accountRoles = accountRoleRepository.findCustomAll();
         List<UserDto> users = accountRoles.stream()
@@ -84,6 +104,17 @@ public class UserServiceImpl implements UserService {
                 .users(users)
                 .size(users.size())
                 .build();
+    }
+
+    @Override
+    public Page<UserDto> findUsersBySearchCondition(String search, Pageable pageable) {
+        return accountRoleRepository.findBySearchCondition(search, pageable)
+                .map(accountRole -> UserDto.builder()
+                        .username(accountRole.getAccount().getUsername())
+                        .password(accountRole.getAccount().getPassword())
+                        .role(accountRole.getRole().getName())
+                        .build()
+                );
     }
 
     private void checkUsername(String username) {

@@ -9,7 +9,6 @@ import com.yellowsunn.spring_security.repository.AccountRepository;
 import com.yellowsunn.spring_security.repository.AccountRoleRepository;
 import com.yellowsunn.spring_security.repository.RoleHierarchyRepository;
 import com.yellowsunn.spring_security.security.CustomUserDetails;
-import com.yellowsunn.spring_security.security.config.SecurityConfig;
 import com.yellowsunn.spring_security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

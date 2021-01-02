@@ -1,20 +1,17 @@
 package com.yellowsunn.spring_security.controller.api;
 
 import com.yellowsunn.spring_security.domain.dto.UserDto;
-import com.yellowsunn.spring_security.domain.dto.UsersDto;
-import com.yellowsunn.spring_security.security.CustomUserDetails;
 import com.yellowsunn.spring_security.service.SecurityService;
 import com.yellowsunn.spring_security.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -40,7 +37,7 @@ public class SecurityController {
     }
 
     @GetMapping("/admin")
-    public UsersDto admin() {
-        return userService.findAll();
+    public Page<UserDto> admin(@Nullable @RequestParam String search, @PageableDefault(size = 10) Pageable pageable) {
+        return userService.findUsersBySearchCondition(search, pageable);
     }
 }
