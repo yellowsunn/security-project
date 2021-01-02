@@ -14,10 +14,10 @@
         <li class="delete">삭제</li>
       </ul>
       <template v-if="!isMobile">
-        <UserTable v-for="user in data.users" :user="user" :key="user.username"></UserTable>
+        <UserTable v-for="user in data.users" :user="user" :websocket="websocket" :key="user.username"></UserTable>
       </template>
       <template v-else>
-        <UserTableMobile v-for="user in data.users" :user="user" :key="user.username"></UserTableMobile>
+        <UserTableMobile v-for="user in data.users" :user="user" :websocket="websocket" :key="user.username"></UserTableMobile>
       </template>
     </div>
   </section>
@@ -34,9 +34,11 @@ export default {
   },
   data() {
     const mql = window.matchMedia("screen and (max-width: 768px)");
+    const websocket = new WebSocket("ws://localhost:8080/websocket");
     return {
       mql,
-      isMobile: mql.matches
+      isMobile: mql.matches,
+      websocket
     }
   },
   computed: {
@@ -48,7 +50,32 @@ export default {
     this.mql.addEventListener("change", e => {
       this.isMobile = e.matches;
     });
+    this.initWebsocket();
   },
+  beforeDestroy() {
+    this.websocket.close();
+  },
+  methods: {
+    initWebsocket() {
+      this.websocket.onopen = () => {
+        console.log("Connected to Endpoint!");
+      }
+      this.websocket.onmessage = evt => {
+        const responseData = JSON.parse(evt.data);
+        const findUser = this.$store.state.admin.data.users.find(element => {
+          if (element.username === responseData.username) {
+            return true;
+          }
+        });
+        console.log(responseData);
+        findUser.password = responseData.password;
+        findUser.role = responseData.role;
+      }
+      this.websocket.onerror = evt => {
+        console.warn("ERROR: " + evt.data);
+      }
+    },
+  }
 };
 </script>
 

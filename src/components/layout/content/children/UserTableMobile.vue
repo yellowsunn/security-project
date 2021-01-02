@@ -35,7 +35,7 @@
         </li>
       </ul>
       <div class="buttons">
-        <div class="edit" v-if="!edit" :class="{'root' : isRoot}" @click="!isRoot ? edit = !edit : undefined">수정</div>
+        <div class="edit" v-if="!edit" :class="{'root' : isRoot}" @click="editStatus">수정</div>
         <div class="edit" v-else @click="fetchUpdate">적용</div>
         <div class="delete" :class="{'root' : isRoot}">삭제</div>
       </div>
@@ -51,7 +51,8 @@ export default {
     VueSlideToggle
   },
   props: {
-    user: Object
+    user: Object,
+    websocket: WebSocket
   },
   data() {
     return {
@@ -73,14 +74,28 @@ export default {
     changeToggle() {
       this.toggle= !this.toggle;
     },
-    fetchUpdate() {
+    async fetchUpdate() {
       if (!(this.data.password === "" && this.user.role === this.data.role)) {
-        this.$store.dispatch('FETCH_UPDATE', this.data);
-        this.data = {
-          ...this.data,
-          password: "",
-        };
+        try {
+          await this.$store.dispatch('FETCH_UPDATE', this.data);
+          this.websocket.send(JSON.stringify({
+            username: this.data.username,
+            isChanged: true,
+            isDeleted: false
+          }));
+        } catch(error) {
+          console.log(error);
+        }
       }
+      this.edit = !this.edit;
+    },
+    editStatus() {
+      if (this.isRoot) return;
+      this.data = {
+        ...this.data,
+        password: "",
+        role: this.user.role
+      };
       this.edit = !this.edit;
     }
   }

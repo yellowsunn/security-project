@@ -35,7 +35,7 @@ const fetchData = async (url) => {
 }
 
 const fetchUpdate = async (data) => {
-  return await axios.put('/update', data, config);
+  return await axios.put('/admin/update', data, config);
 }
 
 export {

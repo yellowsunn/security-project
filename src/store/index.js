@@ -67,13 +67,8 @@ export const store = new Vuex.Store({
         console.log(error);
       }
     },
-    async FETCH_UPDATE({ dispatch }, data) {
-      try {
-        await fetchUpdate(data);
-        dispatch('FETCH_DATA', '/admin');
-      } catch (error) {
-        console.log(error);
-      }
+    async FETCH_UPDATE(context, data) {
+      return await fetchUpdate(data);
     }
   },
   mutations: {
@@ -87,7 +82,10 @@ export const store = new Vuex.Store({
       state.httpStatus = 401;
     },
     SET_ADMIN_DATA(state, data) {
-      state.admin.data = data;
+      state.admin.data = {
+        users: data.content,
+        size: data.totalElements
+      };
     },
   }
 });

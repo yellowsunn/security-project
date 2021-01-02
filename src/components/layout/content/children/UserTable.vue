@@ -16,7 +16,7 @@
       </div>
     </li>
     <li class="edit">
-      <i class="fas fa-pen" v-if="!edit" :class="{'root' : isRoot}" @click="!isRoot ? edit = !edit : undefined"></i>
+      <i class="fas fa-pen" v-if="!edit" :class="{'root' : isRoot}" @click="editStatus"></i>
       <i class="fas fa-check" v-else @click="fetchUpdate"></i>
     </li>
     <li class="delete"><i class="fas fa-trash-alt" :class="{'root' : isRoot}"></i></li>
@@ -26,7 +26,8 @@
 <script>
 export default {
   props: {
-    user: Object
+    user: Object,
+    websocket: WebSocket
   },
   data() {
     return {
@@ -44,14 +45,28 @@ export default {
     }
   },
   methods: {
-    fetchUpdate() {
-        if (!(this.data.password === "" && this.user.role === this.data.role)) {
-        this.$store.dispatch('FETCH_UPDATE', this.data);
-        this.data = {
-          ...this.data,
-          password: "",
-        };
+    async fetchUpdate() {
+      if (!(this.data.password === "" && this.user.role === this.data.role)) {
+        try {
+          await this.$store.dispatch('FETCH_UPDATE', this.data);
+          this.websocket.send(JSON.stringify({
+            username: this.data.username,
+            isChanged: true,
+            isDeleted: false
+          }));
+        } catch(error) {
+          console.log(error);
+        }
       }
+      this.edit = !this.edit;
+    },
+    editStatus() {
+      if (this.isRoot) return;
+      this.data = {
+        ...this.data,
+        password: "",
+        role: this.user.role
+      };
       this.edit = !this.edit;
     }
   }
