@@ -6,6 +6,7 @@ import {
   fetchRegister,
   fetchData,
   fetchAdminUpdate,
+  fetchAdminDelete,
   fetchSearch
 } from '@/api';
 
@@ -72,6 +73,9 @@ export const store = new Vuex.Store({
     async FETCH_ADMIN_UPDATE(context, data) {
       return await fetchAdminUpdate(data);
     },
+    async FETCH_ADMIN_DELETE(context, data) {
+      return await fetchAdminDelete(data);
+    },
     async FETCH_SEARCH({ commit }, search) {
       try {
         const response = await fetchSearch(search);
@@ -110,6 +114,11 @@ export const store = new Vuex.Store({
     ADD_ADMIN_DATA(state, data) {
       const adminData = state.admin.data;
       adminData.users.push(...data.content);
+
+      // 중복 제거
+      let set = new Set(adminData.users.map(JSON.stringify));
+      adminData.users = Array.from(set).map(JSON.parse);
+
       adminData.totalSize = data.totalElements;
       adminData.lastPage = data.last;
     }

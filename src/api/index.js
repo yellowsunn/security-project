@@ -38,6 +38,13 @@ const fetchAdminUpdate = async (data) => {
   return await axios.put('/admin/update', data, config);
 }
 
+const fetchAdminDelete = async (data) => {
+  return await axios.delete('/admin/delete', {
+    ...config,
+    data
+  });
+}
+
 const fetchSearch = async (search, page) => {
   return await axios.get("/admin", {
     ...config,
@@ -54,5 +61,6 @@ export {
   fetchRegister,
   fetchData,
   fetchAdminUpdate,
+  fetchAdminDelete,
   fetchSearch
 };

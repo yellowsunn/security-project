@@ -19,7 +19,7 @@
       <i class="fas fa-pen" v-if="!edit" :class="{'root' : isRoot}" @click="editStatus"></i>
       <i class="fas fa-check" v-else @click="fetchUpdate"></i>
     </li>
-    <li class="delete"><i class="fas fa-trash-alt" :class="{'root' : isRoot}"></i></li>
+    <li class="delete"><i class="fas fa-trash-alt" :class="{'root' : isRoot}" @click="fetchDelete"></i></li>
   </ul>
 </template>
 
@@ -56,6 +56,14 @@ export default {
       }
       this.edit = !this.edit;
     },
+    async fetchDelete() {
+      try {
+        await this.$store.dispatch('FETCH_ADMIN_DELETE', this.data);
+        this.websocketDelete();
+      } catch (error) {
+        console.log(error);
+      }
+    },
     editStatus() {
       if (this.isRoot) return;
       this.data = {
@@ -71,6 +79,13 @@ export default {
         isChanged: true,
         isDeleted: false
       }));
+    },
+    websocketDelete() {
+      this.websocket.send(JSON.stringify({
+        username: this.data.username,
+        isChanged: false,
+        isDeleted: true
+      }))
     }
   }
 };

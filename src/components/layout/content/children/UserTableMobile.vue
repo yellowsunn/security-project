@@ -37,7 +37,7 @@
       <div class="buttons">
         <div class="edit" v-if="!edit" :class="{'root' : isRoot}" @click="editStatus">수정</div>
         <div class="edit" v-else @click="fetchUpdate">적용</div>
-        <div class="delete" :class="{'root' : isRoot}">삭제</div>
+        <div class="delete" :class="{'root' : isRoot}" @click="fetchDelete">삭제</div>
       </div>
     </VueSlideToggle>
   </div>
@@ -85,6 +85,14 @@ export default {
       }
       this.edit = !this.edit;
     },
+    async fetchDelete() {
+      try {
+        await this.$store.dispatch('FETCH_ADMIN_DELETE', this.data);
+        this.websocketDelete();
+      } catch (error) {
+        console.log(error);
+      }
+    },
     editStatus() {
       if (this.isRoot) return;
       this.data = {
@@ -100,6 +108,13 @@ export default {
         isChanged: true,
         isDeleted: false
       }));
+    },
+    websocketDelete() {
+      this.websocket.send(JSON.stringify({
+        username: this.data.username,
+        isChanged: false,
+        isDeleted: true
+      }))
     }
   }
 };

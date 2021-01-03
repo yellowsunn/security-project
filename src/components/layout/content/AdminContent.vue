@@ -15,14 +15,16 @@
       </ul>
       <template v-if="!isMobile">
         <UserTable v-for="user in adminData.users" :user="user" :websocket="websocket" :key="user.username"></UserTable>
-        <infinite-loading @infinite="infiniteHandler" spinner="spiral">
+        <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler" spinner="spiral">
           <span slot="no-more"></span>
+          <span slot="no-results"></span>
         </infinite-loading>
       </template>
       <template v-else>
         <UserTableMobile v-for="user in adminData.users" :user="user" :websocket="websocket" :key="user.username"></UserTableMobile>
-        <infinite-loading @infinite="infiniteHandler" spinner="spiral">
+        <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler" spinner="spiral">
           <span slot="no-more"></span>
+          <span slot="no-results"></span>
         </infinite-loading>
       </template>
     </div>
@@ -48,7 +50,7 @@ export default {
       websocket,
       search: "",
       page: 0,
-      state: null // 무한 스크롤 초기화를 위해 사용
+      infiniteId: +new Date() // +는 숫자변환
     }
   },
   computed: {
@@ -80,8 +82,19 @@ export default {
         console.log(responseData);
 
         if (findUser === undefined) return;
-        findUser.password = responseData.password;
-        findUser.role = responseData.role;
+        if (responseData.isChanged) {
+          findUser.password = responseData.password;
+          findUser.role = responseData.role;
+        } else if (responseData.isDeleted) {
+          const adminData = this.$store.state.admin.data;
+          const users = adminData.users;
+          const deletedUserIdx = users.indexOf(findUser);
+          users.splice(deletedUserIdx, 1);
+          adminData.totalSize -= 1;
+          // 삭제한 유저 위치 페이지로 다시 설정
+          this.page = parseInt(deletedUserIdx / 10);
+          this.infiniteId += 1;
+        }
       }
       this.websocket.onerror = evt => {
         console.warn("ERROR: " + evt.data);
@@ -90,20 +103,14 @@ export default {
     fetchSearch() {
       this.$store.dispatch('FETCH_SEARCH', this.search);
       this.page = 0;
-      this.state.reset();
+      this.infiniteId += 1;
     },
     async infiniteHandler($state) {
-      if (this.state === null) this.state = $state;
       console.log($state);
-
-      if (this.page === 0) {
-        this.page += 1;
-        $state.loaded();
-        return;
-      }
 
       try {
         await this.$store.dispatch('FETCH_SEARCH_SCROLL', { search: this.search, page: this.page });
+
         if (this.adminData.lastPage) {
           console.log(this.adminData.users.length, this.adminData.totalSize);
           $state.complete();
