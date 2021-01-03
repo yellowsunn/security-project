@@ -65,8 +65,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String username) {
+
         accountRepository.findByUsername(username)
-                .ifPresentOrElse(accountRepository::delete, () -> {
+                .ifPresentOrElse(account -> {
+                    accountRoleRepository.findByAccount(account).ifPresentOrElse(accountRole -> {
+                        accountRoleRepository.delete(accountRole);
+                        accountRepository.delete(account);
+                    }, () -> {
+                        throw new IllegalStateException("Invalid account or role");
+                    });
+                }, () -> {
                     throw new IllegalStateException("Invalid account");
                 });
     }

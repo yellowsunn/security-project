@@ -3,6 +3,7 @@ package com.yellowsunn.spring_security.websocket;
 import com.google.gson.Gson;
 import com.yellowsunn.spring_security.domain.dto.SyncDto;
 import com.yellowsunn.spring_security.domain.dto.UserDto;
+import com.yellowsunn.spring_security.domain.dto.WebsocketDto;
 import com.yellowsunn.spring_security.service.UserService;
 import com.yellowsunn.spring_security.websocket.config.CustomSpringConfigurator;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,17 @@ public class Socket {
         if (syncDto.isChanged()) {
             Optional<UserDto> userDtoOptional = userService.findByUsername(syncDto.getUsername());
             if (userDtoOptional.isPresent()) {
-                data = gson.toJson(userDtoOptional.get());
+                UserDto userDto = userDtoOptional.get();
+                WebsocketDto websocketDto = new WebsocketDto();
+                websocketDto.setUser(userDto);
+                websocketDto.setChanged(true);
+                data = gson.toJson(websocketDto);
             }
+        } else if (syncDto.isDeleted()) {
+            WebsocketDto websocketDto = new WebsocketDto();
+            websocketDto.setUsername(syncDto.getUsername());
+            websocketDto.setDeleted(true);
+            data = gson.toJson(websocketDto);
         }
 
         if (data != null) {

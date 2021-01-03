@@ -15,6 +15,7 @@ public interface UserService {
     @Secured("ROLE_ADMIN")
     void update(UserDto userDto);
 
+    @Secured("ROLE_ADMIN")
     void delete(String username);
 
     Optional<UserDto> findByUsername(String username);

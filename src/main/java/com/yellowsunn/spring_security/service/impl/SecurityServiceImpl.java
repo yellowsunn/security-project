@@ -59,7 +59,9 @@ public class SecurityServiceImpl implements SecurityService {
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             Optional<Account> accountOptional = accountRepository.findByUsername(userDetails.getUsername());
             if (accountOptional.isEmpty()) {
-                throw new IllegalStateException("Invalid account");
+                log.info("Invalid account");
+                SecurityContextHolder.clearContext();
+                return;
             }
             Optional<AccountRole> accountRoleOptional = accountRoleRepository.findByAccount(accountOptional.get());
             if (accountRoleOptional.isEmpty()) {
