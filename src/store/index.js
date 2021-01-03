@@ -5,7 +5,7 @@ import {
   fetchLogout,
   fetchRegister,
   fetchData,
-  fetchUpdate,
+  fetchAdminUpdate,
   fetchSearch
 } from '@/api';
 
@@ -20,7 +20,8 @@ export const store = new Vuex.Store({
     admin: {
       data: {
         users: [],
-        size: 0,
+        totalSize: 0,
+        lastPage: false
       }
     },
     httpStatus: 500,
@@ -68,13 +69,22 @@ export const store = new Vuex.Store({
         console.log(error);
       }
     },
-    async FETCH_UPDATE(context, data) {
-      return await fetchUpdate(data);
+    async FETCH_ADMIN_UPDATE(context, data) {
+      return await fetchAdminUpdate(data);
     },
     async FETCH_SEARCH({ commit }, search) {
       try {
         const response = await fetchSearch(search);
         commit('SET_ADMIN_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async FETCH_SEARCH_SCROLL({ commit }, { search, page }) {
+      try {
+        const response = await fetchSearch(search, page);
+        commit('ADD_ADMIN_DATA', response.data);
+        return response;
       } catch (error) {
         console.log(error);
       }
@@ -93,9 +103,16 @@ export const store = new Vuex.Store({
     SET_ADMIN_DATA(state, data) {
       state.admin.data = {
         users: data.content,
-        size: data.totalElements
+        totalSize: data.totalElements,
+        lastPage: data.last,
       };
     },
+    ADD_ADMIN_DATA(state, data) {
+      const adminData = state.admin.data;
+      adminData.users.push(...data.content);
+      adminData.totalSize = data.totalElements;
+      adminData.lastPage = data.last;
+    }
   }
 });
 

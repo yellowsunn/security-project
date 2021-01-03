@@ -34,16 +34,16 @@ const fetchData = async (url) => {
   return await axios.get(url, config);
 }
 
-const fetchUpdate = async (data) => {
+const fetchAdminUpdate = async (data) => {
   return await axios.put('/admin/update', data, config);
 }
 
-const fetchSearch = async (search) => {
+const fetchSearch = async (search, page) => {
   return await axios.get("/admin", {
     ...config,
     params: {
       search,
-      size: 10,
+      page
     }
   })
 }
@@ -53,6 +53,6 @@ export {
   fetchLogout,
   fetchRegister,
   fetchData,
-  fetchUpdate,
+  fetchAdminUpdate,
   fetchSearch
 };

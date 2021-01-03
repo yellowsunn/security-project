@@ -5,7 +5,7 @@
       <input type="text" v-model="search" v-debounce:300ms="fetchSearch" placeholder="전체 사용자 검색">
     </div>
     <div class="table_box">
-      <div class="title">전체 사용자 <span>{{ data.size }}</span>명</div>
+      <div class="title">전체 사용자 <span>{{ adminData.totalSize }}</span>명</div>
       <ul v-if="!isMobile" class="head">
         <li class="username">아이디</li>
         <li class="password">비밀번호</li>
@@ -14,12 +14,19 @@
         <li class="delete">삭제</li>
       </ul>
       <template v-if="!isMobile">
-        <UserTable v-for="user in data.users" :user="user" :websocket="websocket" :key="user.username"></UserTable>
+        <UserTable v-for="user in adminData.users" :user="user" :websocket="websocket" :key="user.username"></UserTable>
+        <infinite-loading @infinite="infiniteHandler" spinner="spiral">
+          <span slot="no-more"></span>
+        </infinite-loading>
       </template>
       <template v-else>
-        <UserTableMobile v-for="user in data.users" :user="user" :websocket="websocket" :key="user.username"></UserTableMobile>
+        <UserTableMobile v-for="user in adminData.users" :user="user" :websocket="websocket" :key="user.username"></UserTableMobile>
+        <infinite-loading @infinite="infiniteHandler" spinner="spiral">
+          <span slot="no-more"></span>
+        </infinite-loading>
       </template>
     </div>
+
   </section>
 </template>
 
@@ -39,11 +46,13 @@ export default {
       mql,
       isMobile: mql.matches,
       websocket,
-      search: ""
+      search: "",
+      page: 0,
+      state: null // 무한 스크롤 초기화를 위해 사용
     }
   },
   computed: {
-    data() {
+    adminData() {
       return this.$store.getters.adminData;
     }
   },
@@ -80,6 +89,31 @@ export default {
     },
     fetchSearch() {
       this.$store.dispatch('FETCH_SEARCH', this.search);
+      this.page = 0;
+      this.state.reset();
+    },
+    async infiniteHandler($state) {
+      if (this.state === null) this.state = $state;
+      console.log($state);
+
+      if (this.page === 0) {
+        this.page += 1;
+        $state.loaded();
+        return;
+      }
+
+      try {
+        await this.$store.dispatch('FETCH_SEARCH_SCROLL', { search: this.search, page: this.page });
+        if (this.adminData.lastPage) {
+          console.log(this.adminData.users.length, this.adminData.totalSize);
+          $state.complete();
+        } else {
+          this.page += 1;
+          $state.loaded();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };

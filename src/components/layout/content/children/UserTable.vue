@@ -48,12 +48,8 @@ export default {
     async fetchUpdate() {
       if (!(this.data.password === "" && this.user.role === this.data.role)) {
         try {
-          await this.$store.dispatch('FETCH_UPDATE', this.data);
-          this.websocket.send(JSON.stringify({
-            username: this.data.username,
-            isChanged: true,
-            isDeleted: false
-          }));
+          await this.$store.dispatch('FETCH_ADMIN_UPDATE', this.data);
+          this.websocketUpdate();
         } catch(error) {
           console.log(error);
         }
@@ -68,6 +64,13 @@ export default {
         role: this.user.role
       };
       this.edit = !this.edit;
+    },
+    websocketUpdate() {
+      this.websocket.send(JSON.stringify({
+        username: this.data.username,
+        isChanged: true,
+        isDeleted: false
+      }));
     }
   }
 };
