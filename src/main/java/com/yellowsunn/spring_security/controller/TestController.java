@@ -1,24 +1,55 @@
 package com.yellowsunn.spring_security.controller;
 
-import com.yellowsunn.spring_security.domain.dto.UserDto;
 import com.yellowsunn.spring_security.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.*;
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
 public class TestController {
 
     private final UserService userService;
 
-    @GetMapping("/test")
-    public Page<UserDto> test(@Nullable @RequestBody UserDto userDto, Pageable pageable) {
-        String username = userDto != null ? userDto.getUsername() : null;
-        return userService.findUsersBySearchCondition(username, pageable);
+
+//    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public void test(@RequestParam("image") MultipartFile multipartFiles) throws IOException {
+//        FileOutputStream fos = new FileOutputStream(multipartFiles.getOriginalFilename());
+//        fos.write(multipartFiles.getBytes());
+//        fos.flush();
+//        fos.close();
+//        log.info(multipartFiles.getName());
+//    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String test(@RequestParam("image") List<MultipartFile> multipartFiles) throws IOException {
+        for (MultipartFile file : multipartFiles) {
+            log.info(file.getOriginalFilename());
+        }
+        FileOutputStream fos = new FileOutputStream("./src/main/resources/static/" + multipartFiles.get(0).getOriginalFilename());
+        fos.write(multipartFiles.get(0).getBytes());
+        fos.flush();
+        fos.close();
+        return "http://localhost:8080/image/" + multipartFiles.get(0).getOriginalFilename();
+    }
+
+    @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> image(@PathVariable("imageName") String imageName) throws IOException {
+        FileInputStream fis = new FileInputStream("./src/main/resources/static/" + imageName);
+        byte[] bytes = fis.readAllBytes();
+        fis.close();
+        return new ResponseEntity<>(bytes, HttpStatus.OK);
     }
 }

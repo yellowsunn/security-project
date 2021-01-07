@@ -76,13 +76,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMeServices(rememberMeServices())
 
                 // csrf
-                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
                 // 동시 세션 제어 (이전 사용자 세션 만료)
                 .and().sessionManagement()
                 .maximumSessions(1)
                 .sessionRegistry(sessionRegistry());
 
+        http.csrf().disable();
         // Custom 인증 필터가 우선 동작
         http.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 

@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.projectlombok:lombok'
 
     implementation 'com.google.code.gson:gson'
 
@@ -32,7 +33,7 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
 
     runtimeOnly 'com.h2database:h2'
-    compileOnly 'org.projectlombok:lombok'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
