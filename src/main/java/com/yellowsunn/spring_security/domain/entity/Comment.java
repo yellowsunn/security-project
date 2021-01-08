@@ -30,7 +30,7 @@ public class Comment {
     @JoinColumn(name = "main_comment_id")
     private Comment mainComment;
 
-    @OneToMany(mappedBy = "mainComment")
+    @OneToMany(mappedBy = "mainComment", cascade = CascadeType.REMOVE)
     List<Comment> subComment = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

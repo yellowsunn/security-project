@@ -18,7 +18,8 @@ public class CheckAuthorityAop {
 
     @Around("execution(* com.yellowsunn.spring_security.controller.api.*.*(..))" +
             "&& !execution(* com.yellowsunn.spring_security.controller.api.UserController.error(..))" +
-            "&& !execution(* com.yellowsunn.spring_security.controller.api.UserController.register(..))")
+            "&& !execution(* com.yellowsunn.spring_security.controller.api.UserController.register(..))" +
+            "&& !execution(* com.yellowsunn.spring_security.controller.api.BoardController.showImage(..))")
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("AOP START: " + joinPoint.toString());
 

@@ -1,5 +1,7 @@
 package com.yellowsunn.spring_security.controller;
 
+import com.yellowsunn.spring_security.domain.dto.PostDto;
+import com.yellowsunn.spring_security.service.PostService;
 import com.yellowsunn.spring_security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -22,7 +25,7 @@ import java.util.List;
 public class TestController {
 
     private final UserService userService;
-
+    private final PostService postService;
 
 //    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public void test(@RequestParam("image") MultipartFile multipartFiles) throws IOException {
@@ -45,11 +48,8 @@ public class TestController {
         return "http://localhost:8080/image/" + multipartFiles.get(0).getOriginalFilename();
     }
 
-    @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> image(@PathVariable("imageName") String imageName) throws IOException {
-        FileInputStream fis = new FileInputStream("./src/main/resources/static/" + imageName);
-        byte[] bytes = fis.readAllBytes();
-        fis.close();
-        return new ResponseEntity<>(bytes, HttpStatus.OK);
+    @PostMapping("/api/test")
+    public void test(@RequestBody PostDto postDto) {
+        postService.post(postDto, null);
     }
 }

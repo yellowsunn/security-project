@@ -37,10 +37,10 @@ public class Board {
     @JoinColumn(name = "account_id")
     public Account account;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     public List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     public List<Image> images = new ArrayList<>();
 
     @PrePersist

@@ -9,9 +9,10 @@ import java.util.List;
 @Data
 public class PostDto {
 
+    private Long id;
     private String title;
     private String content;
-
+    private List<String> images = new ArrayList<>();
     private List<Comment> comments = new ArrayList<>();
 
     private String writer;
