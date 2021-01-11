@@ -1,8 +1,10 @@
 package com.yellowsunn.spring_security.service.impl;
 
 import com.yellowsunn.spring_security.domain.dto.PostDto;
+import com.yellowsunn.spring_security.domain.dto.SimplePostDto;
 import com.yellowsunn.spring_security.domain.entity.Account;
 import com.yellowsunn.spring_security.domain.entity.Board;
+import com.yellowsunn.spring_security.domain.entity.Comment;
 import com.yellowsunn.spring_security.domain.entity.Image;
 import com.yellowsunn.spring_security.repository.AccountRepository;
 import com.yellowsunn.spring_security.repository.BoardRepository;
@@ -10,15 +12,22 @@ import com.yellowsunn.spring_security.repository.ImageRepository;
 import com.yellowsunn.spring_security.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +41,6 @@ public class PostServiceImpl implements PostService {
     private final AccountRepository accountRepository;
     @Value("${file.upload.directory}")
     private String uploadPath;
-    private Map<String, String> imageNameUUID = new HashMap<>();
 
     @Override
     public HttpStatus post(PostDto postDto, List<MultipartFile> multipartFiles) {
@@ -40,19 +48,23 @@ public class PostServiceImpl implements PostService {
         Optional<Account> accountOptional = accountRepository.findByUsername(auth.getName());
         if (accountOptional.isEmpty()) throw new IllegalStateException("Invalid user");
 
+        Map<String, String> imageNameUUID = new HashMap<>();
         // 이미지 이름을 UUID로 변경
         if (multipartFiles != null) {
             for (MultipartFile multipartFile : multipartFiles) {
                 String imageName = multipartFile.getOriginalFilename();
                 imageNameUUID.put(imageName, generateUUID(imageName));
             }
+            changeContentImageName(postDto, imageNameUUID);
         }
-        changeContentImageName(postDto);
+
+        long count = boardRepository.count(); // 게시글 번호 계산을 위한 카운트 호출
 
         // Insert Database
         Board board = Board.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
+                .no(count + 1)
                 .account(accountOptional.get())
                 .build();
         boardRepository.save(board);
@@ -65,7 +77,7 @@ public class PostServiceImpl implements PostService {
         }
 
         // 파일 업로드
-        if(!uploadImageFile(multipartFiles)) {
+        if(!uploadImageFile(multipartFiles, imageNameUUID)) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
@@ -84,6 +96,45 @@ public class PostServiceImpl implements PostService {
         boardRepository.delete(board);
     }
 
+    @Override
+    public Optional<PostDto> findById(Long postId, String serverImgUrl) {
+
+        Optional<Board> boardOptional = boardRepository.findById(postId);
+        if (boardOptional.isEmpty()) return Optional.empty();
+        Board board = boardOptional.get();
+        board.updateHit(); // 조회수 증가
+
+        String content = setContentImageUrl(board, serverImgUrl);
+        String postTime = board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
+
+        PostDto postDto = PostDto.builder()
+                .id(board.getId())
+                .writer(board.getAccount().getUsername())
+                .postTime(postTime)
+                .hit(board.getHit())
+                .title(board.getTitle())
+                .content(content)
+                .build();
+
+        return Optional.ofNullable(postDto);
+    }
+
+    @Override
+    public Page<SimplePostDto> findAll(String title, String username, Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findSimpleAll(title, username, pageable);
+        return boardPage.map(board -> SimplePostDto.builder()
+                .id(board.getId())
+                .no(board.getNo())
+                .writer(board.getAccount().getUsername())
+                .hit(board.getHit())
+                .time(getPostTime(board.getCreatedDate()))
+                .title(board.getTitle())
+                .commentSize(board.getComments().size())
+                .hasImage(!board.getImages().isEmpty())
+                .build()
+        );
+    }
+
     // UUID 생성
     private String generateUUID(String imageName) {
         String[] split = imageName.split("[.]");
@@ -91,7 +142,7 @@ public class PostServiceImpl implements PostService {
         return UUID.randomUUID().toString() + type;
     }
 
-    private void changeContentImageName(PostDto postDto) {
+    private void changeContentImageName(PostDto postDto, Map<String, String> imageNameUUID) {
         if (imageNameUUID.size() == 0) return;
         List<String> imageNames = new ArrayList<>();
         imageNameUUID.forEach((imageName, uuid) -> {
@@ -102,7 +153,7 @@ public class PostServiceImpl implements PostService {
         postDto.setImages(imageNames);
     }
 
-    private boolean uploadImageFile(List<MultipartFile> multipartFiles) {
+    private boolean uploadImageFile(List<MultipartFile> multipartFiles, Map<String, String> imageNameUUID) {
         if (multipartFiles != null) {
             File folder = new File(uploadPath);
             if (!folder.exists()) {
@@ -139,5 +190,27 @@ public class PostServiceImpl implements PostService {
                 }
             }
         }
+    }
+
+    private String getPostTime(LocalDateTime createdDate) {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime today = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0, 0, 0);
+        String postTime;
+        if (createdDate.isAfter(today)) {
+            postTime = createdDate.format(DateTimeFormatter.ofPattern("HH:mm"));
+        } else {
+            postTime = createdDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        }
+
+        return postTime;
+    }
+
+    private String setContentImageUrl(Board board, String serverImgUrl) {
+        List<String> images = board.getImages().stream().map(Image::getName).collect(Collectors.toList());
+        String content = board.getContent();
+        for (String imageName : images) {
+            content = content.replace(imageName, serverImgUrl + imageName);
+        }
+        return content;
     }
 }

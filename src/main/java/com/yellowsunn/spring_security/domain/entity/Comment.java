@@ -26,6 +26,8 @@ public class Comment {
 
     private String content;
 
+    private String orderNumber; // 메인댓글Id_서브댓글Id [ ex) 68_70 ]
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_comment_id")
     private Comment mainComment;
@@ -36,4 +38,8 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
+
+    public void updateOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 }

@@ -19,32 +19,38 @@ public class Board {
 
     @Id @GeneratedValue
     @Column(name = "board_id")
-    public Long id;
+    private Long id;
+
+    private Long no;
 
     @CreatedDate
     @Column(updatable = false)
-    public LocalDateTime createdDate;
+    private LocalDateTime createdDate;
 
-    public String title;
+    private String title;
 
     @Column(columnDefinition = "text")
-    public String content;
+    private String content;
 
     @ColumnDefault("0")
-    public Long hit;
+    private Long hit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    public Account account;
+    private Account account;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    public List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    public List<Image> images = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     @PrePersist
     private void initHit() {
         if (hit == null) hit = 0L;
+    }
+
+    public void updateHit() {
+        this.hit += 1;
     }
 }

@@ -50,16 +50,19 @@ public class AccountRoleRepositoryCustomImpl implements AccountRoleRepositoryCus
 
     @Override
     public Page<AccountRole> findBySearchCondition(String search, Pageable pageable) {
-        QueryResults<AccountRole> results = queryFactory.selectFrom(accountRole)
+        List<AccountRole> content = queryFactory.selectFrom(accountRole)
                 .join(accountRole.role).fetchJoin()
                 .join(accountRole.account).fetchJoin()
                 .where(startsWithUsername(search))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
 
-        List<AccountRole> content = results.getResults();
-        long total = results.getTotal();
+        long total = queryFactory.selectFrom(accountRole)
+                .where(startsWithUsername(search))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchCount();
 
         return new PageImpl<>(content, pageable, total);
     }
