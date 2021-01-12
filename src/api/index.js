@@ -49,8 +49,16 @@ const fetchSearch = async (search, page) => {
   return await axios.get("/admin", {
     ...config,
     params: {
-      search,
-      page
+      search, page
+    }
+  })
+}
+
+const fetchBoard = async (title, writer, page) => {
+  return await axios.get("/board", {
+    ...config,
+    params: {
+      title, writer, page
     }
   })
 }
@@ -62,5 +70,6 @@ export {
   fetchData,
   fetchAdminUpdate,
   fetchAdminDelete,
-  fetchSearch
+  fetchSearch,
+  fetchBoard
 };

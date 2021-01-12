@@ -70,7 +70,10 @@ export default {
   methods: {
     initWebsocket() {
       this.websocket.onopen = () => {
-        console.log("Connected to Endpoint!");
+        console.log("Websocket is connected.");
+      }
+      this.websocket.onclose = () => {
+        console.log("Websocket is closed.");
       }
       this.websocket.onmessage = evt => {
         const responseData = JSON.parse(evt.data);
