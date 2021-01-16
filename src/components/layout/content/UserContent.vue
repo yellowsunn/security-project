@@ -13,7 +13,7 @@
         <li class="hit">조회수</li>
       </ul>
       <ul class="data" v-for="(postData, i) in boardData.posts">
-        <li class="no">{{boardData.totalElements - boardData.currentPage * boardData.size - i}}</li>
+        <li class="no">{{ postData.no }}</li>
         <li class="title">
           <span class="text">{{ postData.title }}</span>
           <i class="far fa-image" v-if="postData.hasImage"></i>
@@ -75,7 +75,7 @@
           <i class="fas fa-angle-double-right"></i>
         </div>
       </div>
-      <div class="write_btn">글쓰기</div>
+      <div class="write_btn" @click="$router.push('/user/write')">글쓰기</div>
     </div>
     <div class="search_box">
       <div class="inner">
@@ -171,7 +171,7 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    }
+    },
   }
 };
 </script>

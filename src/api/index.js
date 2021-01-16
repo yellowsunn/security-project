@@ -54,11 +54,21 @@ const fetchSearch = async (search, page) => {
   })
 }
 
+//
 const fetchBoard = async (title, writer, page) => {
   return await axios.get("/board", {
     ...config,
     params: {
       title, writer, page
+    }
+  })
+}
+
+const fetchPostData =  async (formData) => {
+  return await axios.post("/board/upload", formData, {
+    ...config,
+    headers: {
+      'Content-Type': 'multipart/form-data'
     }
   })
 }
@@ -71,5 +81,6 @@ export {
   fetchAdminUpdate,
   fetchAdminDelete,
   fetchSearch,
-  fetchBoard
+  fetchBoard,
+  fetchPostData
 };

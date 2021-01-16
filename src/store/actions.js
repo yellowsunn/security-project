@@ -5,7 +5,7 @@ import {
   fetchLogin,
   fetchLogout,
   fetchRegister, fetchSearch,
-  fetchBoard,
+  fetchBoard, fetchPostData
 } from '@/api';
 
 export default {
@@ -67,9 +67,18 @@ export default {
     try {
       const response = await fetchBoard(title, writer, page);
       commit('SET_BOARD', response.data);
+      return response;
     } catch(error) {
-      Error("fetch board data error");
       console.log(error);
+      throw Error("fetch board data error");
+    }
+  },
+  async FETCH_POST_DATA(context, formData) {
+    try {
+      return await fetchPostData(formData);
+    } catch (error) {
+      console.log(error);
+      throw new Error("post upload error");
     }
   }
 }

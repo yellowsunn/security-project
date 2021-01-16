@@ -7,6 +7,7 @@ import Register from '@/components/Register';
 import UserView from '@/view/UserView';
 import ManagerView from '@/view/ManagerView';
 import AdminView from '@/view/AdminView';
+import WriteView from '@/view/WriteView';
 
 Vue.use(VueRouter);
 
@@ -41,6 +42,10 @@ export const router = new VueRouter({
       path: '/user',
       component: UserView,
       beforeEnter: fetchData
+    },
+    {
+      path: '/user/write',
+      component: WriteView
     },
     {
       path: '/manager',
