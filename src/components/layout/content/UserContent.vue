@@ -2,7 +2,7 @@
   <section>
     <div class="main_title">
       <div class="text" @click="firstPage">유저게시판</div>
-      <i class="fas fa-pen" v-if="isMobile"></i>
+      <i class="fas fa-pen" v-if="isMobile" @click="$router.push('/user/write')"></i>
     </div>
     <div class="board_table" v-if="!isMobile">
       <ul class="head">
@@ -12,10 +12,10 @@
         <li class="time">작성시간</li>
         <li class="hit">조회수</li>
       </ul>
-      <ul class="data" v-for="(postData, i) in boardData.posts">
+      <ul class="data" v-for="postData in boardData.posts">
         <li class="no">{{ postData.no }}</li>
         <li class="title">
-          <span class="text">{{ postData.title }}</span>
+          <span class="text" @click="movePostPage(postData.id)">{{ postData.title }}</span>
           <i class="far fa-image" v-if="postData.hasImage"></i>
           <span class="comment" v-if="postData.commentSize > 0">({{ postData.commentSize }})</span>
         </li>
@@ -25,7 +25,7 @@
       </ul>
     </div>
     <div class="board_table_mobile" v-else>
-      <div class="data" v-for="postData in boardData.posts">
+      <div class="data" v-for="postData in boardData.posts" @click="movePostPage(postData.id)">
         <div class="title_row">
           <span class="text">{{ postData.title }}</span>
           <i class="far fa-image" v-if="postData.hasImage"></i>
@@ -172,6 +172,10 @@ export default {
         console.log(error);
       }
     },
+    movePostPage(postId) {
+      // 게시글로 이동
+      this.$router.push(`/user/${postId}`);
+    }
   }
 };
 </script>

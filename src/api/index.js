@@ -64,12 +64,27 @@ const fetchBoard = async (title, writer, page) => {
   })
 }
 
-const fetchPostData =  async (formData) => {
+const uploadPostData =  async (formData) => {
   return await axios.post("/board/upload", formData, {
     ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
+  })
+}
+
+const getPostData = async (postId) => {
+  return await axios.get(`/board/${postId}`, config);
+}
+
+const uploadCommentData = async (commentData) => {
+  return axios.post("/board/comment/upload", commentData, config);
+}
+
+const getCommentData = async (postId, page) => {
+  return axios.get(`/board/comment/${postId}`, {
+    ...config,
+    params: { page }
   })
 }
 
@@ -82,5 +97,6 @@ export {
   fetchAdminDelete,
   fetchSearch,
   fetchBoard,
-  fetchPostData
+  uploadPostData, getPostData,
+  uploadCommentData, getCommentData
 };

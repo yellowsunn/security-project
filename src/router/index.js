@@ -8,6 +8,7 @@ import UserView from '@/view/UserView';
 import ManagerView from '@/view/ManagerView';
 import AdminView from '@/view/AdminView';
 import WriteView from '@/view/WriteView';
+import PostView from '@/view/PostView';
 
 Vue.use(VueRouter);
 
@@ -46,6 +47,15 @@ export const router = new VueRouter({
     {
       path: '/user/write',
       component: WriteView
+    },
+    {
+      path: '/user/:postId',
+      component: PostView,
+      beforeEnter: async (to, from, next) => {
+        await store.dispatch('GET_POST_DATA', to.params.postId);
+        await store.dispatch('GET_COMMENT_DATA', { postId: to.params.postId });
+        next();
+      }
     },
     {
       path: '/manager',

@@ -5,8 +5,11 @@ import {
   fetchLogin,
   fetchLogout,
   fetchRegister, fetchSearch,
-  fetchBoard, fetchPostData
+  fetchBoard,
+  uploadPostData, getPostData,
+  uploadCommentData, getCommentData
 } from '@/api';
+import axios from 'axios';
 
 export default {
   async FETCH_LOGIN(context, { account, rememberMe }) {
@@ -73,14 +76,37 @@ export default {
       throw Error("fetch board data error");
     }
   },
-  async FETCH_POST_DATA(context, formData) {
+  async UPLOAD_POST_DATA(context, formData) {
     try {
-      return await fetchPostData(formData);
+      return await uploadPostData(formData);
     } catch (error) {
       console.log(error);
       throw new Error("post upload error");
     }
-  }
+  },
+  async GET_POST_DATA({ commit }, postId) {
+    const response = await getPostData(postId);
+    commit('SET_POST_DTO', response.data);
+  },
+  async UPLOAD_COMMENT_DATA(content, commentData) {
+    try {
+      return await uploadCommentData(commentData);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async GET_COMMENT_DATA({ commit }, { postId, page }) {
+    try {
+      const response = await getCommentData(postId, page);
+      if (response.data.first) {
+        commit('SET_COMMENT_DTO', response.data)
+      } else {
+        commit('UPDATE_COMMENT_DTO', response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 }
 
 function hasSessionExpired(data) {

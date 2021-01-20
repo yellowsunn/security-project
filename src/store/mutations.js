@@ -1,4 +1,5 @@
 import { BoardDto } from '@/dto/BoardDto';
+import { PostDto } from '@/dto/PostDto';
 
 export default {
   SET_USER_INFO(state, user) {
@@ -30,5 +31,29 @@ export default {
   },
   SET_BOARD(state, data) {
     state.boardDto = new BoardDto(data);
+  },
+  SET_POST_DTO(state, data) {
+    state.postDto = new PostDto(data.title, data.content, data.writer, null, data.postTime, data.hit);
+  },
+  SET_COMMENT_DTO(state, data) {
+    state.commentDto = data;
+    state.commentDto.content = state.commentDto.content.filter((comment) => {
+      return comment.mainCommentId === null
+    });
+  },
+  UPDATE_COMMENT_DTO(state, data) {
+    // 기존 콘텐츠
+    let content = state.commentDto.content;
+    const newContent = data.content.filter((comment) => {
+      return comment.mainCommentId === null
+    });
+    content.push(...newContent);
+
+    // 중복 제거
+    let set = new Set(content.map(JSON.stringify));
+    content = Array.from(set).map(JSON.parse);
+
+    state.commentDto = data;
+    state.commentDto.content = content;
   }
 }

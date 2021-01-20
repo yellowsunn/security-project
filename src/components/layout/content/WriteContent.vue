@@ -78,7 +78,7 @@ export default {
         formData.append("content", content);
 
         try {
-          await this.$store.dispatch('FETCH_POST_DATA', formData);
+          await this.$store.dispatch('UPLOAD_POST_DATA', formData);
         } catch (error) {
           alert("게시글 등록에 실패했습니다.");
         } finally {

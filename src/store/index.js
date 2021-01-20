@@ -19,7 +19,11 @@ export const store = new Vuex.Store({
       }
     },
     httpStatus: 500,
-    boardDto: ''
+    boardDto: '',
+    postDto: '',
+    commentDto: '',
+    page: 0,
+    infiniteId: +new Date() // +는 숫자변환
   },
   getters: {
     unauthorized(state) {
