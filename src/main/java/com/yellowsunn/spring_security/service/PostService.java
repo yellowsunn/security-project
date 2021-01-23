@@ -14,7 +14,9 @@ public interface PostService {
 
     HttpStatus post(PostDto postDto, List<MultipartFile> multipartFiles);
 
-    void delete(Long postId);
+    HttpStatus update(PostDto postDto, List<MultipartFile> multipartFiles, String serverImgUrl);
+
+    HttpStatus delete(Long postId, String writer);
 
     Optional<PostDto> findById(Long postId, String serverImgUrl);
 

@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
     public HttpStatus post(PostDto postDto, List<MultipartFile> multipartFiles) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<Account> accountOptional = accountRepository.findByUsername(auth.getName());
-        if (accountOptional.isEmpty()) throw new IllegalStateException("Invalid user");
+        if (accountOptional.isEmpty()) return HttpStatus.UNAUTHORIZED;
 
         Map<String, String> imageNameUUID = new HashMap<>();
         // 이미지 이름을 UUID로 변경
@@ -85,15 +85,58 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void delete(Long postId) {
-        Optional<Board> boardOptional = boardRepository.findById(postId);
-        if (boardOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid post id");
+    public HttpStatus update(PostDto postDto, List<MultipartFile> multipartFiles, String serverImgUrl) {
+        // 로그인한 사용자와 같은 사용자인지 확인
+        HttpStatus errorStatus = checkSameUser(postDto.getWriter());
+        if (errorStatus != null) return errorStatus;
+
+        Optional<Board> boardOptional = boardRepository.findById(postDto.getId());
+        if (boardOptional.isEmpty()) return HttpStatus.NOT_FOUND;
+
+        // 추가된 이미지가 있는 경우
+        Map<String, String> imageNameUUID = new HashMap<>();
+        // 이미지 이름을 UUID로 변경
+        if (multipartFiles != null) {
+            for (MultipartFile multipartFile : multipartFiles) {
+                String imageName = multipartFile.getOriginalFilename();
+                imageNameUUID.put(imageName, generateUUID(imageName));
+            }
+            changeContentImageName(postDto, imageNameUUID);
         }
+
+        Board board = boardOptional.get();
+        board.changeTitle(postDto.getTitle());
+        // 이미지에 서버 url이 붙은경우 제거
+        board.changeContent(postDto.getContent().replaceAll(serverImgUrl, ""));
+
+        for (String imageName : postDto.getImages()) {
+            imageRepository.save(Image.builder()
+                    .name(imageName)
+                    .board(board)
+                    .build());
+        }
+
+        // 파일 업로드
+        if(!uploadImageFile(multipartFiles, imageNameUUID)) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public HttpStatus delete(Long postId, String writer) {
+        // 로그인한 사용자와 같은 사용자인지 확인
+        HttpStatus errorStatus = checkSameUser(writer);
+        if (errorStatus != null) return errorStatus;
+
+        Optional<Board> boardOptional = boardRepository.findById(postId);
+        if (boardOptional.isEmpty()) return HttpStatus.NOT_FOUND;
 
         Board board = boardOptional.get();
         deleteImageFile(board);
         boardRepository.delete(board);
+        return HttpStatus.OK;
     }
 
     @Override
@@ -122,6 +165,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<SimplePostDto> findAll(String title, String username, Pageable pageable) {
         Page<Board> boardPage = boardRepository.findSimpleAll(title, username, pageable);
+
         return boardPage.map(board -> SimplePostDto.builder()
                 .id(board.getId())
                 .no(board.getNo())
@@ -130,7 +174,9 @@ public class PostServiceImpl implements PostService {
                 .time(getPostTime(board.getCreatedDate()))
                 .title(board.getTitle())
                 .commentSize(board.getComments().size())
-                .hasImage(!board.getImages().isEmpty())
+                .hasImage(board.getImages().stream().anyMatch(
+                        image -> board.getContent().contains(image.getName())
+                ))
                 .build()
         );
     }
@@ -212,5 +258,17 @@ public class PostServiceImpl implements PostService {
             content = content.replace(imageName, serverImgUrl + imageName);
         }
         return content;
+    }
+
+    private HttpStatus checkSameUser(String writer) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Account> accountOptional = accountRepository.findByUsername(auth.getName());
+        // 인증되지 않은경우
+        if (accountOptional.isEmpty()) return HttpStatus.UNAUTHORIZED;
+        // 게시글 작성자와 수정하는 사용자가 같지 않은 경우
+        if (!accountOptional.get().getUsername().equals(writer)) {
+            return HttpStatus.FORBIDDEN;
+        }
+        return null;
     }
 }

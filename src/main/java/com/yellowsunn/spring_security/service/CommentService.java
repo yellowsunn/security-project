@@ -10,4 +10,6 @@ public interface CommentService {
     HttpStatus postComment(CommentDto commentDto);
 
     Page<CommentDto> findByPostId(Long postId, Pageable pageable);
+
+    HttpStatus deleteByCommentId(Long commentId, String writer);
 }

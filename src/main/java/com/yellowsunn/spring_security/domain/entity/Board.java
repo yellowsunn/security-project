@@ -53,4 +53,12 @@ public class Board {
     public void updateHit() {
         this.hit += 1;
     }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

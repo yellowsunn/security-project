@@ -21,7 +21,6 @@ public class Comment {
     private Long id;
 
     @CreatedDate
-    @Column(updatable = false)
     public LocalDateTime createdDate;
 
     private String content;
@@ -47,5 +46,12 @@ public class Comment {
 
     public void updateOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    // 답글이 있을때 댓글 삭제하는 경우
+    public void erase() {
+        content = null;
+        createdDate = null;
+        account = null;
     }
 }

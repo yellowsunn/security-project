@@ -14,6 +14,11 @@ spring:
         use_sql_comments: true
         default_batch_fetch_size: 100
 
+  # 파일 업로드 용량
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
 
 logging.level:
   org.hibernate:

@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
                 CommentDto.builder()
                         .commentId(comment.getId())
                         .mainCommentId(comment.getMainComment() != null ? comment.getMainComment().getId() : null)
-                        .writer(comment.getAccount().getUsername())
+                        .writer(comment.getAccount() != null ? comment.getAccount().getUsername() : null)
                         .time(getTime(comment.getCreatedDate()))
                         .text(comment.getContent())
                         .subComment(comment.getSubComment().stream().map(subComment ->
@@ -96,9 +96,53 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
+    @Override
+    public HttpStatus deleteByCommentId(Long commentId, String writer) {
+        // 로그인한 사용자와 같은 사용자인지 확인
+        HttpStatus errorStatus = checkSameUser(writer);
+        if (errorStatus != null) return errorStatus;
+
+        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        if (commentOptional.isEmpty()) return HttpStatus.NOT_FOUND;
+
+        Comment comment = commentOptional.get();
+
+        // 삭제된 댓글의 답글이 전부 삭제된 경우
+        if (comment.getMainComment() != null) {
+            Comment mainComment = comment.getMainComment();
+            if (mainComment.getCreatedDate() == null && mainComment.getSubComment().size() == 1) {
+                commentRepository.delete(comment);
+                commentRepository.delete(mainComment);
+                return HttpStatus.OK;
+            }
+        }
+
+        if (comment.getSubComment().isEmpty()) {
+            commentRepository.delete(comment);
+        } else {
+            // 답글이 있는 댓글이 삭제된 경우
+            comment.erase();
+        }
+
+        return HttpStatus.OK;
+    }
+
     // 시간 변환
     private String getTime(LocalDateTime time) {
+        if (time == null) return null;
         return time.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+    }
+
+    private HttpStatus checkSameUser(String writer) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Account> accountOptional = accountRepository.findByUsername(auth.getName());
+        // 인증되지 않은경우
+        if (accountOptional.isEmpty()) return HttpStatus.UNAUTHORIZED;
+        // 게시글 작성자와 수정하는 사용자가 같지 않은 경우
+        if (!accountOptional.get().getUsername().equals(writer)) {
+            return HttpStatus.FORBIDDEN;
+        }
+        return null;
     }
 }
 

@@ -45,11 +45,23 @@ public class BoardController {
         return new ResponseEntity<>(httpStatus);
     }
 
-    @DeleteMapping("/delete/{postId}")
-    public void delete(@PathVariable("postId") Long postId) {
-        // 권한 비교
-        // if (권한이 맞아야)
-        postService.delete(postId);
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(PostDto postDto, @RequestParam(value = "imageFile", required = false) List<MultipartFile> multipartFiles,
+                                    HttpServletRequest request) {
+        HttpStatus httpStatus = postService.update(postDto, multipartFiles, getServerImgUrl(request));
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestBody PostDto postDto) {
+        HttpStatus httpStatus = postService.delete(postDto.getId(), postDto.getWriter());
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    @DeleteMapping("/comment/delete")
+    public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
+        HttpStatus httpStatus = commentService.deleteByCommentId(commentDto.getCommentId(), commentDto.getWriter());
+        return new ResponseEntity<>(httpStatus);
     }
 
     @GetMapping("")
