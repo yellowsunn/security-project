@@ -20,7 +20,7 @@
         <div class="list_btn" @click="$router.push('/user')">목록보기</div>
         <div class="empty_box" v-if="currentUser === postData.writer"></div>
         <div class="update_btn" v-if="currentUser === postData.writer">수정</div>
-        <div class="delete_btn" v-if="currentUser === postData.writer">삭제</div>
+        <div class="delete_btn"  @click="deletePost" v-if="currentUser === postData.writer">삭제</div>
       </div>
     </div>
     <div class="comment_container">
@@ -86,6 +86,18 @@ export default {
     // 댓글을 업로드한경우 내용 초기화
     initWriteComment() {
       this.writeComment = "";
+    },
+    // 게시글 삭제
+    async deletePost() {
+      const isDelete = confirm('게시글을 삭제하시겠습니까?');
+      if (isDelete) {
+        try {
+          await this.$store.dispatch('DELETE_POST_DATA', this.$route.params.postId);
+          await this.$router.push('/user');
+        } catch (error) {
+          console.log(error);
+        }
+      }
     },
     async infiniteHandler($state) {
       await this.$store.dispatch('GET_COMMENT_DATA', {

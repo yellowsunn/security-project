@@ -78,6 +78,10 @@ const getPostData = async (postId) => {
   return await axios.get(`/board/${postId}`, config);
 }
 
+const deletePostData = async (postId) => {
+  return await axios.delete(`/board/delete/${postId}`, config);
+}
+
 const uploadCommentData = async (commentData) => {
   return axios.post("/board/comment/upload", commentData, config);
 }
@@ -104,6 +108,6 @@ export {
   fetchAdminDelete,
   fetchSearch,
   fetchBoard,
-  uploadPostData, getPostData,
+  uploadPostData, getPostData, deletePostData,
   uploadCommentData, getCommentData, deleteCommentData
 };

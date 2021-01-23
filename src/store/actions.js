@@ -6,7 +6,7 @@ import {
   fetchLogout,
   fetchRegister, fetchSearch,
   fetchBoard,
-  uploadPostData, getPostData,
+  uploadPostData, getPostData, deletePostData,
   uploadCommentData, getCommentData, deleteCommentData
 } from '@/api';
 
@@ -86,6 +86,9 @@ export default {
   async GET_POST_DATA({ commit }, postId) {
     const response = await getPostData(postId);
     commit('SET_POST_DTO', response.data);
+  },
+  async DELETE_POST_DATA(content, postId) {
+    return await deletePostData(postId);
   },
   async UPLOAD_COMMENT_DATA(content, commentData) {
     try {
