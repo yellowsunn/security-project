@@ -19,7 +19,11 @@ public class CommentDto {
 
     private Long commentId;
 
+    private String writer; // 작성자
+
     private String text; // 댓글 내용
+
+    private String time; // 작성 시간
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Long postId; // 게시글 아이디

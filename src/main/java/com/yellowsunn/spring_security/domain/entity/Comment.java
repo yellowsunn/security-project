@@ -28,16 +28,22 @@ public class Comment {
 
     private String orderNumber; // 메인댓글Id_서브댓글Id [ ex) 68_70 ]
 
+    // 댓글의 댓글인 경우 기준이 되는 댓글
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_comment_id")
     private Comment mainComment;
 
+    // 댓글의 댓글
     @OneToMany(mappedBy = "mainComment", cascade = CascadeType.REMOVE)
     List<Comment> subComment = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     public void updateOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
