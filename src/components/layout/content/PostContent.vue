@@ -27,7 +27,7 @@
       <div class="title">
         <div @click="getCommentData"><span>댓글</span><span>{{ commentData.totalElements }}</span><i class="fas fa-sync"></i></div>
       </div>
-      <Comment :comment="comment" v-for="comment in commentData.content"></Comment>
+      <Comment :comment="comment" v-for="comment in commentData.content" :key="comment.commentId"></Comment>
     </div>
 
     <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler" spinner="spiral">

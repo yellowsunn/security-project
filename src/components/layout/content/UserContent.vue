@@ -12,7 +12,7 @@
         <li class="time">작성시간</li>
         <li class="hit">조회수</li>
       </ul>
-      <ul class="data" v-for="postData in boardData.posts">
+      <ul class="data" v-for="postData in boardData.posts" :key="postData.id">
         <li class="no">{{ postData.no }}</li>
         <li class="title">
           <span class="text" @click="movePostPage(postData.id)">{{ postData.title }}</span>
@@ -25,7 +25,7 @@
       </ul>
     </div>
     <div class="board_table_mobile" v-else>
-      <div class="data" v-for="postData in boardData.posts" @click="movePostPage(postData.id)">
+      <div class="data" v-for="postData in boardData.posts" @click="movePostPage(postData.id)" :key="postData.id">
         <div class="title_row">
           <span class="text">{{ postData.title }}</span>
           <i class="far fa-image" v-if="postData.hasImage"></i>

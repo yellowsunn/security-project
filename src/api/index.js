@@ -9,7 +9,8 @@ axios.interceptors.response.use(
 );
 
 const config = {
-  baseURL: 'http://localhost:8080/api',
+  // baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://211.218.36.217:8080/api',
   withCredentials: true,
 };
 
@@ -88,6 +89,12 @@ const getCommentData = async (postId, page) => {
   })
 }
 
+const deleteCommentData = async  (commentId) => {
+  return axios.delete(`/board/comment/delete/${commentId}`, config);
+}
+
+
+
 export {
   fetchLogin,
   fetchLogout,
@@ -98,5 +105,5 @@ export {
   fetchSearch,
   fetchBoard,
   uploadPostData, getPostData,
-  uploadCommentData, getCommentData
+  uploadCommentData, getCommentData, deleteCommentData
 };

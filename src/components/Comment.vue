@@ -1,20 +1,32 @@
 <template>
   <div v-click-outside="initToggle">
-    <div class="comment" @click="changeToggle">
-      <div class="text">{{ comment.text }}</div>
-      <div class="info">
-        <span class="writer"><i class="far fa-user"></i> {{ comment.writer }} </span>
-        <span class="text_bar"> | </span>
-        <span class="time">{{ comment.time }}</span>
+    <template v-if="comment.time === null && comment.writer === null">
+      <div class="deleted_comment">[ 삭제된 댓글입니다. ]</div>
+    </template>
+    <template v-else>
+      <div class="comment" @click="changeToggle">
+        <div class="text_box">
+          <div class="text">{{ comment.text }}</div>
+          <i class="far fa-times-circle" @click="deleteComment(comment.commentId)" v-if="currentUser === comment.writer"></i>
+        </div>
+        <div class="info">
+          <span class="writer"><i class="far fa-user"></i> {{ comment.writer }} </span>
+          <span class="text_bar"> | </span>
+          <span class="time">{{ comment.time }}</span>
+        </div>
       </div>
-    </div>
-    <div class="sub_write" v-if="toggle">
-      <CommentWrite v-on:uploadSubComment="initToggle" :writeComment="subCommentWrite" :mainCommentId="comment.commentId">
-        <textarea :value="subCommentWrite" @input="subCommentWrite = $event.target.value" placeholder="답글을 입력해주세요."></textarea>
-      </CommentWrite>
-    </div>
-    <div class="sud_comment" v-for="subComment in comment.subComment">
-      <div class="text">{{ subComment.text }}</div>
+      <div class="sub_write" v-if="toggle">
+        <CommentWrite v-on:uploadSubComment="initToggle" :writeComment="subCommentWrite" :mainCommentId="comment.commentId">
+          <textarea :value="subCommentWrite" @input="subCommentWrite = $event.target.value" placeholder="답글을 입력해주세요."></textarea>
+        </CommentWrite>
+      </div>
+    </template>
+
+    <div class="sud_comment" v-for="subComment in comment.subComment" :key="subComment.commentId">
+      <div class="text_box">
+        <div class="text">{{ subComment.text }}</div>
+        <i class="far fa-times-circle" @click="deleteComment(subComment.commentId)" v-if="currentUser === subComment.writer"></i>
+      </div>
       <div class="info">
         <span class="writer"><i class="far fa-user"></i> {{ subComment.writer }} </span>
         <span class="text_bar"> | </span>
@@ -45,6 +57,11 @@ export default {
       subCommentWrite: "",
     }
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.userInfo.username;
+    }
+  },
   methods: {
     initToggle() {
       this.toggle = false;
@@ -55,6 +72,19 @@ export default {
       if (!this.toggle) {
         this.subCommentWrite = "";
       }
+    },
+    async deleteComment(commentId) {
+      const isDelete = confirm("댓글을 지우시겠습니까?");
+      if (isDelete) {
+        try {
+          await this.$store.dispatch('DELETE_COMMENT_DATA', commentId);
+          await this.$store.dispatch('GET_COMMENT_DATA', {
+            postId: this.$route.params.postId,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
   }
 };
@@ -64,6 +94,14 @@ export default {
 $border-bottom: 1px solid #d9d9d9;
 $active-color: #a7daed;
 $gray-background-color: #f3f3f3;
+
+.deleted_comment {
+  font-size: 0.813rem;
+  font-style: italic;
+  color: #4e555b;
+  border-bottom: $border-bottom;
+  padding: 10px;
+}
 
 .comment {
   font-size: 0.813rem;
@@ -100,6 +138,19 @@ $gray-background-color: #f3f3f3;
   .info {
     font-size: 0.923em;
     color: #999;
+  }
+}
+
+.comment, .sud_comment {
+  .text_box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .fa-times-circle {
+      color: #d2d3d5;
+      margin-right: -3px;
+      padding: 7px;
+    }
   }
 }
 </style>

@@ -7,9 +7,8 @@ import {
   fetchRegister, fetchSearch,
   fetchBoard,
   uploadPostData, getPostData,
-  uploadCommentData, getCommentData
+  uploadCommentData, getCommentData, deleteCommentData
 } from '@/api';
-import axios from 'axios';
 
 export default {
   async FETCH_LOGIN(context, { account, rememberMe }) {
@@ -107,6 +106,9 @@ export default {
       console.log(error);
     }
   },
+  async DELETE_COMMENT_DATA(content, commentId) {
+    return await deleteCommentData(commentId);
+  }
 }
 
 function hasSessionExpired(data) {

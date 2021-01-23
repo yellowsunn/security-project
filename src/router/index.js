@@ -54,6 +54,7 @@ export const router = new VueRouter({
       beforeEnter: async (to, from, next) => {
         await store.dispatch('GET_POST_DATA', to.params.postId);
         await store.dispatch('GET_COMMENT_DATA', { postId: to.params.postId });
+        await store.dispatch('FETCH_DATA', '/home'); // 로그인한 계정정보를 온다
         next();
       }
     },
