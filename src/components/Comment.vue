@@ -7,7 +7,7 @@
       <div class="comment" @click="changeToggle">
         <div class="text_box">
           <div class="text">{{ comment.text }}</div>
-          <i class="far fa-times-circle" @click="deleteComment(comment.commentId, comment.writer)" v-if="currentUser === comment.writer"></i>
+          <i class="far fa-times-circle" @click.stop="deleteComment(comment.commentId, comment.writer)" v-if="currentUser === comment.writer"></i>
         </div>
         <div class="info">
           <span class="writer"><i class="far fa-user"></i> {{ comment.writer }} </span>
@@ -25,7 +25,7 @@
     <div class="sud_comment" v-for="subComment in comment.subComment" :key="subComment.commentId">
       <div class="text_box">
         <div class="text">{{ subComment.text }}</div>
-        <i class="far fa-times-circle" @click="deleteComment(subComment.commentId, subComment.writer)" v-if="currentUser === subComment.writer"></i>
+        <i class="far fa-times-circle" @click.stop="deleteComment(subComment.commentId, subComment.writer)" v-if="currentUser === subComment.writer"></i>
       </div>
       <div class="info">
         <span class="writer"><i class="far fa-user"></i> {{ subComment.writer }} </span>
@@ -96,6 +96,7 @@ export default {
 $border-bottom: 1px solid #d9d9d9;
 $active-color: #a7daed;
 $gray-background-color: #f3f3f3;
+$desktop-hover-color: #f1f1f1;
 
 .deleted_comment {
   font-size: 0.813rem;
@@ -153,6 +154,21 @@ $gray-background-color: #f3f3f3;
       margin-right: -3px;
       padding: 7px;
     }
+  }
+}
+
+// 데스크탑
+@media screen and (min-width: 768px) {
+  .comment {
+    &:active {
+      background-color: transparent;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .fa-times-circle {
+    cursor: pointer;
   }
 }
 </style>

@@ -1,9 +1,18 @@
 <template>
   <div class="comment_write">
     <slot></slot> <!-- textarea 위치 -->
-    <div class="write_btn" @click="uploadComment">
-      {{ writeButtonText }}
-    </div>
+    <template v-if="isMobile">
+      <div class="write_btn" @click="uploadComment">
+        {{ writeButtonText }}
+      </div>
+    </template>
+    <template v-else>
+      <div>
+        <span class="write_btn_desktop" @click="uploadComment">
+          {{ writeButtonText }}
+        </span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -14,10 +23,18 @@ export default {
     mainCommentId: Number
   },
   data() {
+    const mql = window.matchMedia("screen and (max-width: 48rem)");
     const writeButtonText = this.mainCommentId === undefined ? "댓글쓰기" : "답글쓰기";
     return {
+      mql,
+      isMobile: mql.matches,
       writeButtonText,
     }
+  },
+  mounted() {
+    this.mql.addEventListener("change", e => {
+      this.isMobile = e.matches;
+    });
   },
   methods: {
     async uploadComment() {
@@ -51,6 +68,7 @@ export default {
 <style lang="scss" scoped>
 $button-color: #1a72e6;
 $button-hover-color: #4383ee;
+$border-bottom: 1px solid #d9d9d9;
 
 .comment_write {
   padding: 0.714em;
@@ -77,6 +95,29 @@ $button-hover-color: #4383ee;
 
     &:active {
       background-color: $button-hover-color;
+    }
+  }
+}
+
+// 데스크탑
+@media screen and (min-width: 768px) {
+  .comment_write {
+    div {
+      display: flex;
+      justify-content: flex-end;
+      .write_btn_desktop {
+        padding: 6px 20px;
+        border: 1px solid $button-color;
+        border-radius: 4px;
+        margin: 4px 0;
+        background-color: $button-color;
+        color: white;
+        cursor: pointer;
+        &:hover {
+          background-color: $button-hover-color;
+          border-color: $button-hover-color;
+        }
+      }
     }
   }
 }

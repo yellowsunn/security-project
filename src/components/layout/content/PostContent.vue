@@ -17,10 +17,21 @@
     <div class="content_area">
       <div class="content" v-html="postData.content"></div>
       <div class="btns_area">
-        <div class="list_btn" @click="$router.push('/user')">목록보기</div>
-        <div class="empty_box" v-if="currentUser === postData.writer"></div>
-        <div class="update_btn" @click="updatePost" v-if="currentUser === postData.writer">수정</div>
-        <div class="delete_btn"  @click="deletePost" v-if="currentUser === postData.writer">삭제</div>
+        <template v-if="isMobile">
+          <div class="list_btn" @click="$router.push('/user')">목록보기</div>
+          <div class="empty_box" v-if="currentUser === postData.writer"></div>
+          <div class="update_btn" @click="updatePost" v-if="currentUser === postData.writer">수정</div>
+          <div class="delete_btn"  @click="deletePost" v-if="currentUser === postData.writer">삭제</div>
+        </template>
+        <template v-else>
+          <div class="left_area">
+            <div class="list_btn" @click="$router.push('/user')">목록보기</div>
+          </div>
+          <div class="right_area">
+           <div class="update_btn" @click="updatePost" v-if="currentUser === postData.writer">수정</div>
+           <div class="delete_btn"  @click="deletePost" v-if="currentUser === postData.writer">삭제</div>
+          </div>
+        </template>
       </div>
     </div>
     <div class="comment_container">
@@ -51,7 +62,10 @@ export default {
     CommentWrite,
   },
   data() {
+    const mql = window.matchMedia("screen and (max-width: 768px)");
     return {
+      mql,
+      isMobile: mql.matches,
       writeComment: ''
     }
   },
@@ -75,6 +89,11 @@ export default {
   created() {
     this.$store.state.page = 0;
     this.$store.state.infiniteId = +new Date();
+  },
+  mounted() {
+    this.mql.addEventListener("change", e => {
+      this.isMobile = e.matches;
+    });
   },
   beforeDestroy() {
     this.$store.dispatch('INIT_POST_DATA');
@@ -136,6 +155,7 @@ export default {
 $border-color: #9ea0ab;
 $border-bottom: 1px solid #d9d9d9;
 $active-color: #a7daed;
+$desktop-hover-color: #f1f1f1;
 $default-padding: 10px;
 
 p {
@@ -149,9 +169,7 @@ section {
   .main_title {
     font-size: 24px;
     font-weight: 500;
-    margin-bottom: 24px;
-    width: 100%;
-    max-width: 1200px;
+    padding-bottom: 24px;
     .text {
       cursor: pointer;
     }
@@ -238,6 +256,62 @@ section {
   }
 }
 
+// 데스크탑
+@media screen and (min-width: 768px) {
+  section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    .main_title, .title_info, .content_area, .comment_container, .comment_write{
+      width: 100%;
+      max-width: 1200px;
+    }
+    .main_title {
+      border-bottom: 1px solid;
+    }
+    .content_area {
+      .btns_area {
+        justify-content: space-between;
+        > * {
+          flex: none;
+        }
+        .right_area {
+          display: flex;
+        }
+        .list_btn, .update_btn, .delete_btn {
+          border-radius: 4px;
+          &:active {
+            background-color: transparent;
+          }
+          &:hover {
+            background-color: $desktop-hover-color;
+          }
+        }
+        .list_btn {
+          padding: 6px 20px;
+
+          margin-left: 0;
+        }
+        .update_btn {
+          padding: 6px 33px;
+        }
+        .delete_btn {
+          padding: 6px 33px;
+          margin-right: 0;
+        }
+      }
+    }
+    .comment_container {
+      .title div {
+        &:active {
+          background: transparent;
+        }
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 768px) {
   section {
     .main_title {
@@ -245,10 +319,8 @@ section {
       justify-content: space-between;
       align-items: center;
       font-size: 16px;
-      margin-bottom: 0;
       padding: 12px;
       box-shadow: 0 1px 3px 0 #bdbdbd;
-
       .text {
         &:active {
           background-color: $active-color;
@@ -265,7 +337,6 @@ section {
       }
     }
   }
-
 }
 
 @media screen and (max-width: 30rem) {
