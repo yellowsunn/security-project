@@ -46,7 +46,13 @@ export const router = new VueRouter({
     },
     {
       path: '/user/write',
-      component: WriteView
+      component: WriteView,
+      beforeEnter: async (to, from, next) => {
+        if (to.query.postId !== undefined) {
+          await store.dispatch('GET_POST_DATA', to.query.postId);
+        }
+        next();
+      }
     },
     {
       path: '/user/:postId',

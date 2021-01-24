@@ -7,7 +7,7 @@
       <div class="comment" @click="changeToggle">
         <div class="text_box">
           <div class="text">{{ comment.text }}</div>
-          <i class="far fa-times-circle" @click="deleteComment(comment.commentId)" v-if="currentUser === comment.writer"></i>
+          <i class="far fa-times-circle" @click="deleteComment(comment.commentId, comment.writer)" v-if="currentUser === comment.writer"></i>
         </div>
         <div class="info">
           <span class="writer"><i class="far fa-user"></i> {{ comment.writer }} </span>
@@ -25,7 +25,7 @@
     <div class="sud_comment" v-for="subComment in comment.subComment" :key="subComment.commentId">
       <div class="text_box">
         <div class="text">{{ subComment.text }}</div>
-        <i class="far fa-times-circle" @click="deleteComment(subComment.commentId)" v-if="currentUser === subComment.writer"></i>
+        <i class="far fa-times-circle" @click="deleteComment(subComment.commentId, subComment.writer)" v-if="currentUser === subComment.writer"></i>
       </div>
       <div class="info">
         <span class="writer"><i class="far fa-user"></i> {{ subComment.writer }} </span>
@@ -73,16 +73,18 @@ export default {
         this.subCommentWrite = "";
       }
     },
-    async deleteComment(commentId) {
+    async deleteComment(commentId, writer) {
       const isDelete = confirm("댓글을 지우시겠습니까?");
       if (isDelete) {
         try {
-          await this.$store.dispatch('DELETE_COMMENT_DATA', commentId);
+          await this.$store.dispatch('DELETE_COMMENT_DATA', {
+            commentId, writer
+          });
           await this.$store.dispatch('GET_COMMENT_DATA', {
             postId: this.$route.params.postId,
           });
         } catch (error) {
-          console.log(error);
+          alert('댓글을 삭제하는데 실패하였습니다.');
         }
       }
     }

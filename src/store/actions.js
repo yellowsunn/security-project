@@ -7,7 +7,7 @@ import {
   fetchRegister, fetchSearch,
   fetchBoard,
   uploadPostData, getPostData, deletePostData,
-  uploadCommentData, getCommentData, deleteCommentData
+  uploadCommentData, getCommentData, deleteCommentData, updatePostData,
 } from '@/api';
 
 export default {
@@ -87,8 +87,19 @@ export default {
     const response = await getPostData(postId);
     commit('SET_POST_DTO', response.data);
   },
-  async DELETE_POST_DATA(content, postId) {
-    return await deletePostData(postId);
+  async UPDATE_POST_DATA(context, formData) {
+    try {
+      return await updatePostData(formData);
+    } catch (error) {
+      console.log(error);
+      throw new Error("post update error");
+    }
+  },
+  async DELETE_POST_DATA(content, postDto) {
+    return await deletePostData(postDto);
+  },
+  async INIT_POST_DATA({ commit }) {
+    commit('INIT_POST_DTO');
   },
   async UPLOAD_COMMENT_DATA(content, commentData) {
     try {
@@ -109,8 +120,8 @@ export default {
       console.log(error);
     }
   },
-  async DELETE_COMMENT_DATA(content, commentId) {
-    return await deleteCommentData(commentId);
+  async DELETE_COMMENT_DATA(content, commentDto) {
+    return await deleteCommentData(commentDto);
   }
 }
 

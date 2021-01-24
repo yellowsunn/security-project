@@ -19,7 +19,7 @@
       <div class="btns_area">
         <div class="list_btn" @click="$router.push('/user')">목록보기</div>
         <div class="empty_box" v-if="currentUser === postData.writer"></div>
-        <div class="update_btn" v-if="currentUser === postData.writer">수정</div>
+        <div class="update_btn" @click="updatePost" v-if="currentUser === postData.writer">수정</div>
         <div class="delete_btn"  @click="deletePost" v-if="currentUser === postData.writer">삭제</div>
       </div>
     </div>
@@ -76,6 +76,9 @@ export default {
     this.$store.state.page = 0;
     this.$store.state.infiniteId = +new Date();
   },
+  beforeDestroy() {
+    this.$store.dispatch('INIT_POST_DATA');
+  },
   methods: {
     // 댓글 불러오기
     async getCommentData() {
@@ -87,12 +90,22 @@ export default {
     initWriteComment() {
       this.writeComment = "";
     },
+    updatePost() {
+      const postId = this.$route.params.postId;
+      this.$router.push({
+        path :'/user/write',
+        query: { postId }
+      })
+    },
     // 게시글 삭제
     async deletePost() {
       const isDelete = confirm('게시글을 삭제하시겠습니까?');
       if (isDelete) {
         try {
-          await this.$store.dispatch('DELETE_POST_DATA', this.$route.params.postId);
+          await this.$store.dispatch('DELETE_POST_DATA', {
+            id : this.postData.id,
+            writer: this.postData.writer
+          });
           await this.$router.push('/user');
         } catch (error) {
           console.log(error);

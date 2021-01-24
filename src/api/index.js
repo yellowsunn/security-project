@@ -9,8 +9,7 @@ axios.interceptors.response.use(
 );
 
 const config = {
-  // baseURL: 'http://localhost:8080/api',
-  baseURL: 'http://211.218.36.217:8080/api',
+  baseURL: 'http://localhost:8080/api',
   withCredentials: true,
 };
 
@@ -78,8 +77,20 @@ const getPostData = async (postId) => {
   return await axios.get(`/board/${postId}`, config);
 }
 
-const deletePostData = async (postId) => {
-  return await axios.delete(`/board/delete/${postId}`, config);
+const updatePostData = async (formData) => {
+  return await axios.put("/board/update", formData, {
+    ...config,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+const deletePostData = async (data) => {
+  return await axios.delete(`/board/delete`, {
+    ...config,
+    data
+  });
 }
 
 const uploadCommentData = async (commentData) => {
@@ -93,11 +104,12 @@ const getCommentData = async (postId, page) => {
   })
 }
 
-const deleteCommentData = async  (commentId) => {
-  return axios.delete(`/board/comment/delete/${commentId}`, config);
+const deleteCommentData = async  (data) => {
+  return axios.delete(`/board/comment/delete`, {
+    ...config,
+    data
+  });
 }
-
-
 
 export {
   fetchLogin,
@@ -108,6 +120,6 @@ export {
   fetchAdminDelete,
   fetchSearch,
   fetchBoard,
-  uploadPostData, getPostData, deletePostData,
+  uploadPostData, getPostData, updatePostData, deletePostData,
   uploadCommentData, getCommentData, deleteCommentData
 };

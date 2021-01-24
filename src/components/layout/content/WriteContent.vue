@@ -34,6 +34,12 @@ export default {
       ],
     };
   },
+  created() {
+    // 수정하는 경우
+    if (this.$route.query.postId !== undefined) {
+      this.postDto = this.$store.state.postDto;
+    }
+  },
   methods: {
     handleImageAdded(file, Editor, cursorLocation, resetUploader) {
       const blobUrl = URL.createObjectURL(file);
@@ -78,7 +84,15 @@ export default {
         formData.append("content", content);
 
         try {
-          await this.$store.dispatch('UPLOAD_POST_DATA', formData);
+          if (this.$route.query.postId !== undefined) {
+            // 수정하는 경우
+            formData.append("id", this.postDto.id);
+            formData.append("writer", this.postDto.writer);
+            await this.$store.dispatch('UPDATE_POST_DATA', formData);
+          } else {
+            // 새로 게시글 작성하는 경우
+            await this.$store.dispatch('UPLOAD_POST_DATA', formData);
+          }
         } catch (error) {
           alert("게시글 등록에 실패했습니다.");
         } finally {

@@ -33,7 +33,11 @@ export default {
     state.boardDto = new BoardDto(data);
   },
   SET_POST_DTO(state, data) {
-    state.postDto = new PostDto(data.title, data.content, data.writer, null, data.postTime, data.hit);
+    // state.postDto = new PostDto(data.title, data.content, data.writer, null, data.postTime, data.hit);
+    state.postDto = data;
+  },
+  INIT_POST_DTO(state) {
+    state.postDto = '';
   },
   SET_COMMENT_DTO(state, data) {
     state.commentDto = data;
