@@ -58,16 +58,24 @@ export const router = new VueRouter({
       path: '/user/:postId',
       component: PostView,
       beforeEnter: async (to, from, next) => {
-        await store.dispatch('GET_POST_DATA', to.params.postId);
-        await store.dispatch('GET_COMMENT_DATA', { postId: to.params.postId });
-        await store.dispatch('FETCH_DATA', '/home'); // 로그인한 계정정보를 온다
-        next();
+        try {
+          await store.dispatch('GET_POST_DATA', to.params.postId);
+          await store.dispatch('GET_COMMENT_DATA', { postId: to.params.postId });
+          await store.dispatch('FETCH_DATA', '/home'); // 로그인한 계정정보를 온다
+          next();
+        } catch (error) {
+          next('/');
+        }
       }
     },
     {
       path: '/manager',
       component: ManagerView,
-      beforeEnter: fetchData
+      beforeEnter: async (to, from, next) => {
+        await store.dispatch('FETCH_DATA', '/home');
+        await store.dispatch('GET_CHAT_DATA');
+        await fetchData(to, from, next);
+      }
     },
     {
       path: '/admin',

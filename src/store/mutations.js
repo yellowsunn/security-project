@@ -1,5 +1,5 @@
 import { BoardDto } from '@/dto/BoardDto';
-import { PostDto } from '@/dto/PostDto';
+import { Deque } from '@/common/Deque';
 
 export default {
   SET_USER_INFO(state, user) {
@@ -59,5 +59,30 @@ export default {
 
     state.commentDto = data;
     state.commentDto.content = content;
+  },
+  SET_CHAT_DTO(state, data) {
+    state.chatDto = data;
+    state.chatSet = new Set();
+    state.chatDeque = new Deque();
+    for (let i = 0; i < state.chatDto.content.length; i++) {
+      state.chatDeque.push_front(state.chatDto.content[i]); // 앞으로 쌓음
+      state.chatSet.add(JSON.stringify(state.chatDto.content[i]));
+    }
+  },
+  INSERT_CHAT_DTO(state, { data, isHistory }) {
+    state.chatDto = data;
+    for (let i = 0; i < state.chatDto.content.length; i++) {
+      // 중복 되지 않는 경우에만
+      if (!state.chatSet.has(JSON.stringify(state.chatDto.content[i]))) {
+        if (!isHistory) {
+          // 채팅창에 새로운 메세지가 들어온 경우
+          state.chatDeque.push_back(state.chatDto.content[i]); // 뒤에 삽입
+        } else {
+          // 과거의 메세지를 스크롤을 올려 보는 경우
+          state.chatDeque.push_front(state.chatDto.content[i]); // 앞에 삽입
+        }
+        state.chatSet.add(JSON.stringify(state.chatDto.content[i]));
+      }
+    }
   }
 }

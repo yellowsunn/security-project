@@ -1,5 +1,6 @@
 <template>
   <section>
+    <i class="fas fa-home" @click="$router.push('/')"></i>
     <div class="login_container">
       <b-form class="form" @submit="onSubmit">
         <div class="title">
@@ -69,11 +70,17 @@ section {
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: #f7f7f7;
   font-family: 'Rubik', sans-serif;
   font-size: 1.25rem;
+  .fa-home {
+    font-size: 3em;
+    margin-bottom: 0.500em;
+    cursor: pointer;
+  }
   .login_container {
     display: flex;
     flex-direction: column;

@@ -271,6 +271,15 @@ section {
       border-bottom: 1px solid;
     }
     .content_area {
+      .content {
+        ::v-deep img {
+          max-width: 680px;
+        }
+        ::v-deep iframe {
+          width: 680px;
+          height: 380px;
+        }
+      }
       .btns_area {
         justify-content: space-between;
         > * {

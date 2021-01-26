@@ -8,6 +8,7 @@ import {
   fetchBoard,
   uploadPostData, getPostData, deletePostData,
   uploadCommentData, getCommentData, deleteCommentData, updatePostData,
+  getChatData
 } from '@/api';
 
 export default {
@@ -86,6 +87,7 @@ export default {
   async GET_POST_DATA({ commit }, postId) {
     const response = await getPostData(postId);
     commit('SET_POST_DTO', response.data);
+    return response;
   },
   async UPDATE_POST_DATA(context, formData) {
     try {
@@ -116,12 +118,33 @@ export default {
       } else {
         commit('UPDATE_COMMENT_DTO', response.data);
       }
+      return response;
     } catch (error) {
       console.log(error);
+      throw new Error("get comment error.");
     }
   },
   async DELETE_COMMENT_DATA(content, commentDto) {
     return await deleteCommentData(commentDto);
+  },
+  async GET_CHAT_DATA({ commit }) {
+    try {
+      const response = await getChatData();
+      commit('SET_CHAT_DTO', response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // 추가된 경우
+  async INSERT_CHAT_DATA({ commit }, page) {
+    // 과거의 채팅을 보는 경우 (스크롤을 위로 올리는 경우)
+    const isHistory = (page !== undefined && page > 0)
+    try {
+      const response = await getChatData(page);
+      commit('INSERT_CHAT_DTO', { data: response.data, isHistory });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

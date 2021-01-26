@@ -8,10 +8,17 @@ axios.interceptors.response.use(
   }
 );
 
+const server = 'localhost:8080';
+// const server = '211.218.36.217:8080';
+
 const config = {
-  baseURL: 'http://localhost:8080/api',
+  baseURL: `http://${server}/api`,
   withCredentials: true,
 };
+
+const getWebSocket = (path) => {
+  return new WebSocket(`ws://${server}${path}`);
+}
 
 const fetchLogin = async (account, rememberMe) => {
   return await axios.post('/login', account, {
@@ -54,7 +61,6 @@ const fetchSearch = async (search, page) => {
   })
 }
 
-//
 const fetchBoard = async (title, writer, page) => {
   return await axios.get("/board", {
     ...config,
@@ -111,7 +117,15 @@ const deleteCommentData = async  (data) => {
   });
 }
 
+const getChatData = async (page) => {
+  return axios.get("/chat", {
+    ...config,
+    params: { page }
+  });
+}
+
 export {
+  getWebSocket,
   fetchLogin,
   fetchLogout,
   fetchRegister,
@@ -121,5 +135,6 @@ export {
   fetchSearch,
   fetchBoard,
   uploadPostData, getPostData, updatePostData, deletePostData,
-  uploadCommentData, getCommentData, deleteCommentData
+  uploadCommentData, getCommentData, deleteCommentData,
+  getChatData
 };

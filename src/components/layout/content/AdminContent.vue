@@ -35,7 +35,7 @@
 <script>
 import UserTable from '@/components/layout/content/children/UserTable';
 import UserTableMobile from '@/components/layout/content/children/UserTableMobile';
-
+import { getWebSocket } from '@/api';
 export default {
   components: {
     UserTable,
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     const mql = window.matchMedia("screen and (max-width: 768px)");
-    const websocket = new WebSocket("ws://localhost:8080/websocket");
+    const websocket = getWebSocket('/websocket');
     return {
       mql,
       isMobile: mql.matches,
