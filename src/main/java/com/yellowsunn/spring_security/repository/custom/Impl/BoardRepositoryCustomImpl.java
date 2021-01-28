@@ -29,7 +29,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     @Override
     public Page<Board> findSimpleAll(String title, String writer, Pageable pageable) {
         List<Board> content = queryFactory.selectFrom(board)
-                .join(board.account).fetchJoin()
                 .where(containsTitle(title), containsUsername(writer))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -48,7 +47,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     @Override
     public Optional<Board> findCustomById(Long id) {
         Board findBoard = queryFactory.selectFrom(board)
-                .join(board.account).fetchJoin()
                 .where(board.id.eq(id))
                 .fetchOne();
 
@@ -56,7 +54,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     }
 
     private BooleanExpression containsUsername(String username) {
-        return StringUtils.hasText(username) ? board.account.username.contains(username) : null;
+        return StringUtils.hasText(username) ? board.writer.contains(username) : null;
     }
 
     private BooleanExpression containsTitle(String title) {

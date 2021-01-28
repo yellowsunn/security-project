@@ -40,9 +40,7 @@ public class Comment {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String writer;
 
     public void updateOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
@@ -52,6 +50,6 @@ public class Comment {
     public void erase() {
         content = null;
         createdDate = null;
-        account = null;
+        writer = null;
     }
 }

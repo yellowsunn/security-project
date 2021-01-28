@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
         if (boardOptional.isEmpty()) return HttpStatus.NOT_FOUND;
 
         Comment.CommentBuilder builder = Comment.builder()
-                .account(accountOptional.get())
+                .writer(accountOptional.get().getUsername())
                 .content(commentDto.getText())
                 .board(boardOptional.get());
 
@@ -81,13 +81,13 @@ public class CommentServiceImpl implements CommentService {
                 CommentDto.builder()
                         .commentId(comment.getId())
                         .mainCommentId(comment.getMainComment() != null ? comment.getMainComment().getId() : null)
-                        .writer(comment.getAccount() != null ? comment.getAccount().getUsername() : null)
+                        .writer(comment.getWriter())
                         .time(getTime(comment.getCreatedDate()))
                         .text(comment.getContent())
                         .subComment(comment.getSubComment().stream().map(subComment ->
                                 CommentDto.builder()
                                         .commentId(subComment.getId())
-                                        .writer(subComment.getAccount().getUsername())
+                                        .writer(subComment.getWriter())
                                         .time(getTime(subComment.getCreatedDate()))
                                         .text(subComment.getContent())
                                         .build()

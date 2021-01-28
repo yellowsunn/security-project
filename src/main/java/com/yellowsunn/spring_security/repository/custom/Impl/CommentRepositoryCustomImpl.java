@@ -24,7 +24,6 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     @Override
     public Page<Comment> findCustomByBoard(Board board, Pageable pageable) {
         List<Comment> content = queryFactory.selectFrom(comment)
-                .leftJoin(comment.account).fetchJoin()
                 .where(comment.board.eq(board))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

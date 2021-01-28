@@ -65,7 +65,7 @@ public class PostServiceImpl implements PostService {
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .no(count + 1)
-                .account(accountOptional.get())
+                .writer(accountOptional.get().getUsername())
                 .build();
         boardRepository.save(board);
 
@@ -152,7 +152,7 @@ public class PostServiceImpl implements PostService {
 
         PostDto postDto = PostDto.builder()
                 .id(board.getId())
-                .writer(board.getAccount().getUsername())
+                .writer(board.getWriter())
                 .postTime(postTime)
                 .hit(board.getHit())
                 .title(board.getTitle())
@@ -169,7 +169,7 @@ public class PostServiceImpl implements PostService {
         return boardPage.map(board -> SimplePostDto.builder()
                 .id(board.getId())
                 .no(board.getNo())
-                .writer(board.getAccount().getUsername())
+                .writer(board.getWriter())
                 .hit(board.getHit())
                 .time(getPostTime(board.getCreatedDate()))
                 .title(board.getTitle())
