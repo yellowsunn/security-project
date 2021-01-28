@@ -3,6 +3,10 @@ package com.yellowsunn.spring_security.domain.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+/**
+ * 사용자의 정보를 담은 DTO
+ */
+
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode

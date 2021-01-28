@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 게시판 Controller (권한 - ROLE_USER)
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/board")
@@ -30,21 +34,20 @@ public class BoardController {
 
     private final PostService postService;
     private final CommentService commentService;
+
+    // 파일을 업로드할 디렉토리 위치
     @Value("${file.upload.directory}")
     private String uploadPath;
 
+    // 게시글 업로드 (+ 파일이 있으면 파일 업로드)
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(PostDto postDto, @RequestParam(value = "imageFile", required = false) List<MultipartFile> multipartFiles) throws IOException {
         HttpStatus httpStatus = postService.post(postDto, multipartFiles);
         return new ResponseEntity<>(httpStatus);
     }
 
-    @PostMapping("/comment/upload")
-    public ResponseEntity<?> commentUpload(@RequestBody CommentDto commentDto) {
-        HttpStatus httpStatus = commentService.postComment(commentDto);
-        return new ResponseEntity<>(httpStatus);
-    }
-
+    // 게시글 업데이트 (+ 추가된 파일이 있으면 파일 업로드)
+    // - 현재 로그인한 인증객체로 동일한 사용자인지 비교
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(PostDto postDto, @RequestParam(value = "imageFile", required = false) List<MultipartFile> multipartFiles,
                                     HttpServletRequest request) {
@@ -52,18 +55,7 @@ public class BoardController {
         return new ResponseEntity<>(httpStatus);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody PostDto postDto) {
-        HttpStatus httpStatus = postService.delete(postDto.getId(), postDto.getWriter());
-        return new ResponseEntity<>(httpStatus);
-    }
-
-    @DeleteMapping("/comment/delete")
-    public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
-        HttpStatus httpStatus = commentService.deleteByCommentId(commentDto.getCommentId(), commentDto.getWriter());
-        return new ResponseEntity<>(httpStatus);
-    }
-
+    // 게시글 목록 조회 (간단한 정보만 넘겨준다)
     @GetMapping("")
     public Page<SimplePostDto> list(@RequestParam @Nullable String title,
                                     @RequestParam("writer") @Nullable String username,
@@ -71,6 +63,7 @@ public class BoardController {
         return postService.findAll(title, username, pageable);
     }
 
+    // 특정 게시글 조회
     @GetMapping("/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable("postId") Long postId, HttpServletRequest request) {
         Optional<PostDto> postDtoOptional = postService.findById(postId, getServerImgUrl(request));
@@ -81,11 +74,35 @@ public class BoardController {
         return new ResponseEntity<>(postDtoOptional.get(), HttpStatus.OK);
     }
 
+    // 특정 게시글을 삭제
+    // - 현재 로그인한 인증객체로 동일한 사용자인지 비교
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestBody PostDto postDto) {
+        HttpStatus httpStatus = postService.delete(postDto.getId(), postDto.getWriter());
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    // 댓글 업로드
+    @PostMapping("/comment/upload")
+    public ResponseEntity<?> commentUpload(@RequestBody CommentDto commentDto) {
+        HttpStatus httpStatus = commentService.postComment(commentDto);
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    // 댓글 조회
     @GetMapping("/comment/{postId}")
     public Page<CommentDto> commentList(@PathVariable("postId") Long postId, @PageableDefault(size = 100) Pageable pageable) {
         return commentService.findByPostId(postId, pageable);
     }
 
+    // 댓글 삭제
+    @DeleteMapping("/comment/delete")
+    public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
+        HttpStatus httpStatus = commentService.deleteByCommentId(commentDto.getCommentId(), commentDto.getWriter());
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    // 이미지 조회
     @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> showImage(@PathVariable("imageName") String imageName) throws IOException {
         FileInputStream fis = new FileInputStream(uploadPath + imageName);

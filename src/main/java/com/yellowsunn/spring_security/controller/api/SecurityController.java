@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,23 +23,24 @@ public class SecurityController {
     private final UserService userService;
     private final SecurityService securityService;
 
+    // 로그인한 경우 사용자 정보를 반환
     @GetMapping("/home")
     public UserDto userInfo() {
         return securityService.currentUserInfo();
     }
 
     @GetMapping("/user")
-    public String user() {
-        return "user";
+    public ResponseEntity<?> user() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/manager")
-    public String manager() {
-        return "manager";
+    public ResponseEntity<?> manager() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/admin")
-    public Page<UserDto> admin(@Nullable @RequestParam String search, @PageableDefault(size = 10) Pageable pageable) {
-        return userService.findUsersBySearchCondition(search, pageable);
+    public ResponseEntity<?> admin() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

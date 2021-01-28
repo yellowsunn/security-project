@@ -6,6 +6,10 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 사용자 목록 DTO
+ */
+
 @Data
 @Builder
 public class UsersDto {

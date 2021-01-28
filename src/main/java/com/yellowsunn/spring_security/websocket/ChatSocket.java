@@ -2,17 +2,11 @@ package com.yellowsunn.spring_security.websocket;
 
 import com.google.gson.Gson;
 import com.yellowsunn.spring_security.domain.dto.ChatDto;
-import com.yellowsunn.spring_security.domain.dto.SyncDto;
 import com.yellowsunn.spring_security.service.ChatService;
 import com.yellowsunn.spring_security.websocket.config.CustomSpringConfigurator;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.websocket.WsSession;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -21,6 +15,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * 채팅 페이지에서 사용되는 웹소켓
+ */
 @Slf4j
 @Component
 @ServerEndpoint(value = "/chat", configurator = CustomSpringConfigurator.class)

@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 채팅 DTO
+ */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

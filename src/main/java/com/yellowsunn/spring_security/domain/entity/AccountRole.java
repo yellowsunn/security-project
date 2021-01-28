@@ -4,6 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * 사용자와 권한정보를 담은 엔티티
+ */
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor @Builder
