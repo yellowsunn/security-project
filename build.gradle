@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
 
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'

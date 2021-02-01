@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor @Builder
 @Getter
 public class Chat {
-    @Id @GeneratedValue
-    @JoinColumn(name = "chat_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_id")
     private Long id;
 
     @CreatedDate

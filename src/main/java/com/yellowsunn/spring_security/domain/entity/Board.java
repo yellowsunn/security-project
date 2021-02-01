@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 public class Board {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
     private Long id;
 
@@ -33,7 +33,7 @@ public class Board {
 
     private String title;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "mediumtext")
     private String content;
 
     @ColumnDefault("0")

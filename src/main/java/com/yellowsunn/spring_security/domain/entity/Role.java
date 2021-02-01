@@ -2,10 +2,7 @@ package com.yellowsunn.spring_security.domain.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * 권한 엔티티
@@ -16,10 +13,10 @@ import javax.persistence.Id;
 @Getter
 @EqualsAndHashCode(of = "name")
 public class Role {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private Long id;
 
-    @Column(name = "role_name", unique = true)
+    @Column(name = "role_name", unique = true, nullable = false)
     private String name;
 }

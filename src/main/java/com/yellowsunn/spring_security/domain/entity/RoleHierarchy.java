@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Getter
 public class RoleHierarchy {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_hierarchy_id")
     private Long id;
 

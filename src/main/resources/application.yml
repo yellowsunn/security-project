@@ -1,29 +1,33 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/study/IdeaProjects/spring_security/security
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://db:3306/security_db?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
-        format_sql: true
-        use_sql_comments: true
+#        format_sql: true
+#        use_sql_comments: true
         default_batch_fetch_size: 100
 
   # 파일 업로드 용량
   servlet:
     multipart:
-      maxFileSize: 10MB
-      maxRequestSize: 10MB
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
 
-logging.level:
-  org.hibernate:
-    SQL: debug
-    type: trace
+logging.level.root: warn
+#logging.level:
+#  org.hibernate:
+#    SQL: debug
+#    type: trace
 
 # 사용자 설정
 file.upload.directory: ./upload/image/
+

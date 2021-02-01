@@ -13,8 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor @Builder
 @Getter
 public class AccountRole {
-    @Id @GeneratedValue
-    @Column(name = "acount_role_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_role_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

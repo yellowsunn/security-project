@@ -13,13 +13,14 @@ import javax.persistence.*;
 @Getter
 @EqualsAndHashCode(of = "username")
 public class Account {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
 
     @Column(unique = true)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     public void changePassword(String password) {

@@ -21,7 +21,7 @@ public class CheckAuthorityAop {
             "&& !execution(* com.yellowsunn.spring_security.controller.api.UserController.register(..))" +
             "&& !execution(* com.yellowsunn.spring_security.controller.api.BoardController.showImage(..))")
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("AOP START: " + joinPoint.toString());
+        log.trace("AOP START: " + joinPoint.toString());
 
         // DB의 권한과 인증 객체의 권한이 일치하지 않는 경우 동기화
         securityService.syncAuthority();
@@ -29,7 +29,7 @@ public class CheckAuthorityAop {
         try {
             return joinPoint.proceed();
         } finally {
-            log.info("AOP END: " + joinPoint.toString());
+            log.trace("AOP END: " + joinPoint.toString());
         }
     }
 }

@@ -20,8 +20,8 @@ import java.util.List;
 @Getter
 public class Comment {
 
-    @Id @GeneratedValue
-    @JoinColumn(name = "comment_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long id;
 
     @CreatedDate

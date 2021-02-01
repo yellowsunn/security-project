@@ -39,8 +39,22 @@ public class SecurityServiceImpl implements SecurityService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         UserDto.UserDtoBuilder userDtoBuilder = UserDto.builder();
-        setUsername(auth, userDtoBuilder);
-        setAuthority(auth, userDtoBuilder);
+
+        // Set Username
+        CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
+        userDtoBuilder.username(customUserDetails.getUsername());
+
+        // Set authorities
+        Set<String> authorities = auth.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        if (authorities.contains("ROLE_ADMIN")) {
+            userDtoBuilder.role("ADMIN");
+        } else if (authorities.contains("ROLE_MANAGER")) {
+            userDtoBuilder.role("MANAGER");
+        } else if (authorities.contains("ROLE_USER")) {
+            userDtoBuilder.role("USER");
+        }
 
         return userDtoBuilder.build();
     }
@@ -80,25 +94,6 @@ public class SecurityServiceImpl implements SecurityService {
                 SecurityContextHolder.clearContext();
                 SecurityContextHolder.getContext().setAuthentication(newAuth);
             }
-        }
-    }
-
-    private void setUsername(Authentication auth, UserDto.UserDtoBuilder userDtoBuilder) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
-        userDtoBuilder.username(customUserDetails.getUsername());
-    }
-
-    private void setAuthority(Authentication auth, UserDto.UserDtoBuilder userDtoBuilder) {
-        Set<String> authorities = auth.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-
-        if (authorities.contains("ROLE_ADMIN")) {
-            userDtoBuilder.role("ADMIN");
-        } else if (authorities.contains("ROLE_MANAGER")) {
-            userDtoBuilder.role("MANAGER");
-        } else if (authorities.contains("ROLE_USER")) {
-            userDtoBuilder.role("USER");
         }
     }
 
