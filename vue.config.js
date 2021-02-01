@@ -1,6 +1,7 @@
 module.exports = {
   lintOnSave: false,
   devServer: {
-    port: 8081
+    port: 8081,
+    historyApiFallback: true
   }
 }

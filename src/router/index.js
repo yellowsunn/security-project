@@ -80,7 +80,10 @@ export const router = new VueRouter({
     {
       path: '/admin',
       component: AdminView,
-      beforeEnter: fetchData
+       beforeEnter: async (to, from, next) => {
+        await store.dispatch('FETCH_SEARCH');
+        await fetchData(to, from, next);
+      }
     }
   ]
 });

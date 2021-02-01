@@ -1,4 +1,5 @@
 import axios from 'axios';
+import getEnv from '@/utils/env'
 
 axios.interceptors.response.use(
   response => {
@@ -8,8 +9,7 @@ axios.interceptors.response.use(
   }
 );
 
-const server = 'localhost:8080';
-// const server = '211.218.36.217:8080';
+const server = getEnv('VUE_APP_API_DOMAIN');
 
 const config = {
   baseURL: `http://${server}/api`,
@@ -53,7 +53,7 @@ const fetchAdminDelete = async (data) => {
 }
 
 const fetchSearch = async (search, page) => {
-  return await axios.get("/admin", {
+  return await axios.get("/admin/list", {
     ...config,
     params: {
       search, page

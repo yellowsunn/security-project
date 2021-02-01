@@ -35,8 +35,6 @@ export default {
 
       if (url === '/home') {
         commit('SET_USER_INFO', response.data);
-      } else if (url === '/admin') {
-        commit('SET_ADMIN_DATA', response.data);
       }
     } catch (error) {
       commit('SET_HTTP_STATUS', error.status)

@@ -109,8 +109,6 @@ export default {
       this.infiniteId += 1;
     },
     async infiniteHandler($state) {
-      console.log($state);
-
       try {
         await this.$store.dispatch('FETCH_SEARCH_SCROLL', { search: this.search, page: this.page });
 

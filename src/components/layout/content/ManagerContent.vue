@@ -6,7 +6,7 @@
         <span slot="no-more"></span>
         <span slot="no-results"></span>
       </infinite-loading>
-      <div v-for="(chat, idx) in chatDeque" :class="[ isSameUser(chat.writer) ? 'my_chat_box' : 'others_chat_box' ]" :key="chat.id">
+      <div v-for="chat in chatDeque" :class="[ isSameUser(chat.writer) ? 'my_chat_box' : 'others_chat_box' ]" :key="chat.id">
         <span class="day_first" v-if="chat.dayFirst">
           {{ chat.fullDate }}
         </span>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="write_box" ref="write_box">
-      <contenteditable tag="span" class="input_text" v-model="text"></contenteditable>
+      <contenteditable tag="span" class="input_text" v-model="text" @keyup.enter.exact="enterKeySendText"></contenteditable>
       <i class="fas fa-paper-plane" @click="sendText"></i>
     </div>
   </section>
@@ -37,8 +37,11 @@ import { getWebSocket } from '@/api';
 export default {
   data() {
     const websocket = getWebSocket('/chat');
+    const mql = window.matchMedia("screen and (max-width: 768px)");
     return {
       websocket,
+      mql,
+      isMobile: mql.matches,
       text: ''
     }
   },
@@ -115,6 +118,11 @@ export default {
         }
       }
     },
+    async enterKeySendText() {
+      if (!this.isMobile) {
+        await this.sendText();
+      }
+    },
     isSameUser(writer) {
       return this.currentUser === writer;
     },
@@ -158,121 +166,120 @@ $my-chatbox-color: #fce300;
   color: #e9eff3;
 }
 
-@media screen and (max-width: 48rem) {
-  section {
-    background-color: $background-color;
-    height: calc(100vh - 3.667rem);
-    font-size: 1rem;
-    .title {
-      width: 100%;
-      font-size: 1.250em;
-      font-weight: bold;
-      text-align: center;
-      padding: 0.625rem;
-    }
-    .chat_room {
-      height: calc(100% - 3.125rem - 3.125rem);
-      overflow-y: scroll;
-      padding: 0 0.5em;
+// 기본이 모바일
+section {
+  background-color: $background-color;
+  height: calc(100vh - 3.667rem);
+  font-size: 1rem;
+  .title {
+    width: 100%;
+    font-size: 1.250em;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.625rem;
+  }
+  .chat_room {
+    height: calc(100% - 3.125rem - 3.125rem);
+    overflow-y: scroll;
+    padding: 0 0.5em;
+    display: flex;
+    flex-direction: column;
+    .others_chat_box {
       display: flex;
       flex-direction: column;
-      .others_chat_box {
+      .chat_box {
         display: flex;
-        flex-direction: column;
-        .chat_box {
+        margin: 0.282rem;
+        margin-right: 1em;
+        .icon {
           display: flex;
-          margin: 0.282rem;
-          margin-right: 1em;
-          .icon {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            font-size: 2.313rem;
+          flex-direction: column;
+          justify-content: flex-start;
+          font-size: 2.313rem;
 
-            i {
-              border-radius: 50%;
-              box-shadow: inset 0 0 0 0.188rem $background-color;
-              color: #7ac9c0;
-              background-color: #bde2e2;
-            }
-          }
-          .text_info {
-            margin-left: 0.625em;
-
-            .writer {
-              font-size: 0.813em;
-              margin-bottom: 0.188rem;
-              font-weight: 400;
-              color: #111111;
-            }
-
-            .chat_text {
-              background-color: white;
-              padding: 0.5em 0.75em;
-              border-radius: 1em;
-            }
-          }
-          .time {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            font-size: 0.688em;
-            margin-left: 0.5rem;
-            color: $time-color;
-            white-space: nowrap;
+          i {
+            border-radius: 50%;
+            box-shadow: inset 0 0 0 0.188rem $background-color;
+            color: #7ac9c0;
+            background-color: #bde2e2;
           }
         }
-      }
-      .my_chat_box {
-        display: flex;
-        flex-direction: column;
-        .chat_box {
+        .text_info {
+          margin-left: 0.625em;
+
+          .writer {
+            font-size: 0.813em;
+            margin-bottom: 0.188rem;
+            font-weight: 400;
+            color: #111111;
+          }
+
+          .chat_text {
+            background-color: white;
+            padding: 0.5em 0.75em;
+            border-radius: 1em;
+          }
+        }
+        .time {
           display: flex;
-          flex-direction: row-reverse;
-          margin: 0.282rem;
-          margin-left: 1em;
-          .text_info {
-            .chat_text {
-              padding: 0.5em 0.75em;
-              border-radius: 1em;
-              background-color: $my-chatbox-color;
-            }
-          }
-          .time {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            font-size: 0.688rem;
-            margin-right: 0.5rem;
-            color: $time-color;
-            white-space: nowrap;
-          }
+          flex-direction: column;
+          justify-content: flex-end;
+          font-size: 0.688em;
+          margin-left: 0.5rem;
+          color: $time-color;
+          white-space: nowrap;
         }
       }
     }
-    .write_box {
-      position: sticky;
-      bottom: 0;
+    .my_chat_box {
+      display: flex;
+      flex-direction: column;
+      .chat_box {
+        display: flex;
+        flex-direction: row-reverse;
+        margin: 0.282rem;
+        margin-left: 1em;
+        .text_info {
+          .chat_text {
+            padding: 0.5em 0.75em;
+            border-radius: 1em;
+            background-color: $my-chatbox-color;
+          }
+        }
+        .time {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          font-size: 0.688rem;
+          margin-right: 0.5rem;
+          color: $time-color;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  .write_box {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    min-height: 3.125rem;
+    background-color: white;
+    display: flex;
+    .input_text {
       width: 100%;
       min-height: 3.125rem;
-      background-color: white;
+      max-height: 6.25rem;
+      scroll-padding: 0.5rem;
+      overflow-y: scroll;
+      display: inline-block;
+      padding: 0.875rem .5rem .5rem .5rem;
+    }
+    .fa-paper-plane {
       display: flex;
-      .input_text {
-        width: 100%;
-        min-height: 3.125rem;
-        max-height: 6.25rem;
-        scroll-padding: 0.5rem;
-        overflow-y: scroll;
-        display: inline-block;
-        padding: 0.875rem .5rem .5rem .5rem;
-      }
-      .fa-paper-plane {
-        display: flex;
-        align-items: center;
-        background-color: $my-chatbox-color;
-        padding: 0.375em 1.063em;
-        cursor: pointer;
-      }
+      align-items: center;
+      background-color: $my-chatbox-color;
+      padding: 0.375em 1.063em;
+      cursor: pointer;
     }
   }
 }
@@ -280,6 +287,20 @@ $my-chatbox-color: #fce300;
 @media screen and (max-width: 30rem) {
   section {
     height: calc(100vh - 3.45rem)
+  }
+}
+
+// 데스크탑
+@media screen and (min-width: 48rem) {
+  section {
+    height: calc(100vh - 66.97px - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 500px;
+    margin: 30px auto;
+    border: 10px solid;
+    border-radius: 2%;
   }
 }
 </style>
