@@ -24,11 +24,11 @@ public class ChatDto {
     private String writer;
     private String text;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "a hh:mm", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "a hh:mm", timezone = "Asia/Seoul", locale = "ko")
     private LocalDateTime date;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy년 M월 d일 eeee", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy년 M월 d일 eeee", timezone = "Asia/Seoul", locale = "ko")
     private LocalDateTime fullDate;
     // 특정날짜의 첫번째 데이터인지 체크
     private boolean isDayFirst;
