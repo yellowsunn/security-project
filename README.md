@@ -24,7 +24,7 @@
 <img src="./frontend/src/assets/mobile.gif" width="600px"></img><br/>
 <br/>
 
-* 주소: http://yellowsunn.com:3000/
+* 주소: http://www.yellowsunn.com:3000/
   * 반응형 웹사이트로 제작
 
 * 사용자 권한은 ADMIN > MANAGER > USER 순의 계층 구조를 가지고 있으며 사용자의 권한에 맞는 페이지만 접속할 수 있다.
