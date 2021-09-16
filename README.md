@@ -2,7 +2,7 @@
 
 ## 개선된 프로젝트
 이 프로젝트의 문제점을 개선하여 프로젝트를 다시 제작했다.   
-개선된 프로젝트: https://github.com/yellowsunn/security-project
+개선된 프로젝트: https://github.com/yellowsunn/simpleforum
 
 ## 개요
 * 스프링 시큐리티를 이용하여 DB와 연동한 커스텀한 인증, 인가 서비스를 제공한다.
